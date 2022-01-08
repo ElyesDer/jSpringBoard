@@ -8,6 +8,10 @@
 
 import UIKit
 
+func print (event : Int, message : String) {
+    print("__Event\(Int.random(in: 10...99)) : \(event) : \(message)")
+    print("___")
+}
 extension AppGridManager {
     
     @discardableResult
@@ -49,7 +53,7 @@ extension AppGridManager {
     
     func startFolderOperation(for itemCell: HomeItemCell) {
         guard let dragOperation = self.currentDragOperation else { return }
-        
+        print(event: 100, message: #function + " TIMER Start ")
         self.folderTimer = Timer.scheduledTimer(timeInterval: 0.7, target: self, selector: #selector(folderTimerHandler), userInfo: nil, repeats: false)
         
         dragOperation.transitionToIconPlaceholder()
@@ -82,7 +86,11 @@ extension AppGridManager {
     }
     
     @objc func folderTimerHandler() {
-        guard let folderOperation = self.currentFolderOperation, !folderOperation.isDismissing else { return }
+        print(event: 11, message: #function)
+        guard let folderOperation = self.currentFolderOperation, !folderOperation.isDismissing else {
+            print(event: 110, message: #function + " DISMISSINS ")
+            return
+        }
         
         self.folderTimer = nil
         
@@ -288,7 +296,7 @@ extension AppGridManager {
             !folderOperation.isDismissing else { return }
         
         folderOperation.dragOperation.transitionFromIconPlaceholder()
-        
+        print(event: 120, message: #function + " CANCELING FOLDER TIMER ")
         self.folderTimer?.invalidate()
         self.folderTimer = nil
         self.currentFolderOperation = nil

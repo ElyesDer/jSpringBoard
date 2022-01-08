@@ -19,7 +19,7 @@ protocol AppGridManagerDelegate: class {
     
     func didDelete(item: HomeItem, on manager: AppGridManager)
     func didSelect(app: App, on manager: AppGridManager)
-    func openSettings(fromSnapshotView snapshotView: UIView, on manager: AppGridManager)
+//    func openSettings(fromSnapshotView snapshotView: UIView, on manager: AppGridManager)
 }
 
 class AppGridManager: NSObject {
@@ -293,7 +293,7 @@ extension AppGridManager: PageCellDelegate {
             convertedFrame.origin.x -= self.mainCollectionView.contentOffset.x
             let iconSnapshot = cell.iconContainerView.snapshotView(afterScreenUpdates: true)!
             iconSnapshot.frame = convertedFrame
-            self.delegate?.openSettings(fromSnapshotView: iconSnapshot, on: self)
+//            self.delegate?.openSettings(fromSnapshotView: iconSnapshot, on: self)
         } else if let item = cell.item as? App, !self.isEditing {
             self.delegate?.didSelect(app: item, on: self)
         }

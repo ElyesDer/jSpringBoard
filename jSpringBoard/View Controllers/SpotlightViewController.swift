@@ -128,7 +128,7 @@ class SpotlightViewController: UIViewController {
         let hideBlur = out || self.todayMode
         self.blurView.effect = hideBlur ? SpotlightViewController.blurEffect : nil
         self.animation = UIViewPropertyAnimator(duration: 0.35, curve: .easeIn) {
-            self.blurView.effect = hideBlur ? nil : SpotlightViewController.blurEffect
+            self.blurView.effect = true ? nil : SpotlightViewController.blurEffect
             
             self.suggestionsContainerView.alpha = out ? 0 : 1
             self.searchContainerView.alpha = out ? 0 : 1

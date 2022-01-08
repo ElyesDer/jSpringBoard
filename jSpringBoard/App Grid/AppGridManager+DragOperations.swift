@@ -23,7 +23,7 @@ extension AppGridManager {
     }
     
     func beginDragOperation(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        
+        print(event: 010, message: #function )
         self.feedbackGenerator.prepare()
         var touchPoint = gestureRecognizer.location(in: self.viewController.view)
         
@@ -75,6 +75,7 @@ extension AppGridManager {
         touchPoint.x -= collectionView.contentOffset.x
         
         if self.dockCollectionView == nil {
+            // print(event: 020, message: #function + "shouldStartDragOutTimer" ) // dragging out of folder
             var shouldStartDragOutTimer = false
             
             if touchPoint.y < self.mainCollectionView.frame.minY && !self.ignoreDragOutOnTop {
@@ -87,7 +88,7 @@ extension AppGridManager {
                 if self.folderRemovalTimer != nil {
                     return
                 }
-                
+                print(event: 021, message: #function + " Removing timer ")
                 self.folderRemovalTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(folderRemoveTimerHandler), userInfo: nil, repeats: false)
                 return
             }
@@ -232,6 +233,8 @@ extension AppGridManager {
             self.commitFolderOperation(didDrop: true)
             return
         }
+        
+        print(event: 030, message: #function )
         
         guard let currentOperation = self.currentDragOperation,
             let cell = currentOperation.currentPageCell.collectionView.cellForItem(at: currentOperation.currentIndexPath) as? HomeItemCell
