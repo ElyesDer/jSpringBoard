@@ -39,11 +39,11 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
             
             if collectionView == self.mainCollectionView {
                 var appsPerRow: Int
-                if self.dockCollectionView == nil {
-                    appsPerRow = Settings.shared.appsPerRowOnFolder
-                } else {
+//                if self.dockCollectionView == nil {
+//                    appsPerRow = Settings.shared.appsPerRowOnFolder
+//                } else {
                     appsPerRow = Settings.shared.appsPerRow
-                }
+//                }
                 
                 row = Int(ceil(Double(indexPath.row + 1) / Double(appsPerRow)))
                 column = indexPath.row - ((row - 1) * appsPerRow) + 1
@@ -57,13 +57,13 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
             viewController.item = item
             viewController.itemView = placeholderView
             
-            if self.dockCollectionView == nil {
-                viewController.horizontalPosition = .center
-                viewController.verticalPosition = row > 2 ? .top : .bottom
-            } else {
+//            if self.dockCollectionView == nil {
+//                viewController.horizontalPosition = .center
+//                viewController.verticalPosition = row > 2 ? .top : .bottom
+//            } else {
                 viewController.horizontalPosition = column > Settings.shared.appsPerRow / 2 ? .right : .left
                 viewController.verticalPosition = row > Settings.shared.appRows / 2 ? .top : .bottom
-            }
+//            }
             
             viewController.delegate = self
             viewController.viewDidAppearBlock = {

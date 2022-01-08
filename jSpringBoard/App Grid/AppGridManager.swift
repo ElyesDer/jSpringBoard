@@ -39,7 +39,7 @@ class AppGridManager: NSObject {
     
     unowned var viewController: UIViewController
     unowned var mainCollectionView: UICollectionView
-    weak var dockCollectionView: UICollectionView?
+//    weak var dockCollectionView: UICollectionView?
     var longPressRecognizer: UILongPressGestureRecognizer
     var threeDTouchRecognizer: ThreeDTouchGestureRecognizer
     
@@ -50,11 +50,11 @@ class AppGridManager: NSObject {
         }
     }
     
-    var dockItems: [HomeItem] {
-        didSet {
-            self.delegate?.didUpdateItems(on: self)
-        }
-    }
+//    var dockItems: [HomeItem] {
+//        didSet {
+//            self.delegate?.didUpdateItems(on: self)
+//        }
+//    }
     
     var feedbackGenerator = UIImpactFeedbackGenerator()
     var isEditing = false
@@ -74,15 +74,17 @@ class AppGridManager: NSObject {
     var ignoreDragOutOnTop = false
     var ignoreDragOutOnBottom = false
     
-    init(viewController: UIViewController, mainCollectionView: UICollectionView, items: [[HomeItem]], dockCollectionView: UICollectionView? = nil, dockItems: [HomeItem] = []) {
+    init(viewController: UIViewController, mainCollectionView: UICollectionView, items: [[HomeItem]]
+//         dockCollectionView: UICollectionView? = nil, dockItems: [HomeItem] = []
+    ) {
         
         self.viewController = viewController
         
         self.mainCollectionView = mainCollectionView
-        self.dockCollectionView = dockCollectionView
+//        self.dockCollectionView = dockCollectionView
         
         self.items = items
-        self.dockItems = dockItems
+//        self.dockItems = dockItems
         
         self.longPressRecognizer = UILongPressGestureRecognizer()
         self.threeDTouchRecognizer = ThreeDTouchGestureRecognizer()
@@ -94,8 +96,8 @@ class AppGridManager: NSObject {
         self.mainCollectionView.delegate = self
         self.mainCollectionView.prefetchDataSource = self
             
-        self.dockCollectionView?.dataSource = self
-        self.dockCollectionView?.delegate = self
+//        self.dockCollectionView?.dataSource = self
+//        self.dockCollectionView?.delegate = self
         
         self.longPressRecognizer.addTarget(self, action: #selector(handleLongGesture(_:)))
         self.threeDTouchRecognizer.addTarget(self, action: #selector(handle3DTouchGesture(_:)))
@@ -107,11 +109,11 @@ class AppGridManager: NSObject {
     func collectionViewAndPageCell(at point: CGPoint) -> (collectionView: UICollectionView, cell: PageCell) {
         
         let collectionView: UICollectionView
-        if let dockCollectionView = self.dockCollectionView, dockCollectionView.frame.contains(self.viewController.view.convert(point, to: dockCollectionView)) {
-            collectionView = dockCollectionView
-        } else {
+//        if let dockCollectionView = self.dockCollectionView, dockCollectionView.frame.contains(self.viewController.view.convert(point, to: dockCollectionView)) {
+//            collectionView = dockCollectionView
+//        } else {
             collectionView = self.mainCollectionView
-        }
+//        }
         
         let convertedPoint = self.viewController.view.convert(point, to: collectionView)
         if let indexPath = collectionView.indexPathForItem(at: convertedPoint), let cell = collectionView.cellForItem(at: indexPath) as? PageCell {
@@ -131,7 +133,7 @@ class AppGridManager: NSObject {
         self.isEditing = true
         self.viewController.view.removeGestureRecognizer(self.threeDTouchRecognizer)
         
-        for cell in self.mainCollectionView.visibleCells + (self.dockCollectionView?.visibleCells ?? []) {
+        for cell in self.mainCollectionView.visibleCells {
             let cell = cell as! PageCell
             cell.enterEditingMode()
         }
@@ -150,7 +152,7 @@ class AppGridManager: NSObject {
         self.isEditing = false
         self.viewController.view.addGestureRecognizer(self.threeDTouchRecognizer)
         
-        for cell in self.mainCollectionView.visibleCells + (self.dockCollectionView?.visibleCells ?? []) {
+        for cell in self.mainCollectionView.visibleCells {
             let cell = cell as! PageCell
             cell.leaveEditingMode()
         }
@@ -182,7 +184,7 @@ class AppGridManager: NSObject {
             self.items[self.currentPage].remove(at: currentIndex)
         }
         
-        let appsPerPage = self.dockCollectionView == nil ? Settings.shared.appsPerPageOnFolder : Settings.shared.appsPerPage
+        let appsPerPage = Settings.shared.appsPerPageOnFolder
         if self.items[nextPage].count == appsPerPage {
             currentOperation.savedState = self.items
             self.moveLastItem(inPage: nextPage)
@@ -213,7 +215,7 @@ class AppGridManager: NSObject {
         currentPage.insert(self.items[page].removeLast(), at: 0)
         self.items[page + 1] = currentPage
         
-        let appsPerPage = self.dockCollectionView == nil ? Settings.shared.appsPerPageOnFolder : Settings.shared.appsPerPage
+        let appsPerPage = Settings.shared.appsPerPageOnFolder
         if currentPage.count > appsPerPage {
             self.moveLastItem(inPage: page + 1)
         }
@@ -222,11 +224,11 @@ class AppGridManager: NSObject {
     func updateState(forPageCell pageCell: PageCell) {
         
         var collectionView: UICollectionView
-        if let dockCollectionView = self.dockCollectionView, dockCollectionView.visibleCells.contains(pageCell) {
-            collectionView = dockCollectionView
-        } else {
+//        if let dockCollectionView = self.dockCollectionView, dockCollectionView.visibleCells.contains(pageCell) {
+//            collectionView = dockCollectionView
+//        } else {
             collectionView = self.mainCollectionView
-        }
+//        }
         
         var items: [HomeItem] = []
         for i in 0..<pageCell.collectionView.visibleCells.count {
@@ -239,9 +241,10 @@ class AppGridManager: NSObject {
         if collectionView == self.mainCollectionView {
             guard let pageIndexPath = collectionView.indexPath(for: pageCell) else { return }
             self.items[pageIndexPath.row] = items
-        } else {
-            self.dockItems = items
         }
+//        else {
+//            self.dockItems = items
+//        }
         
         pageCell.items = items
     }
@@ -307,10 +310,11 @@ extension AppGridManager: PageCellDelegate {
             if self.mainCollectionView.visibleCells.contains(pageCell), let indexPath = self.mainCollectionView.indexPath(for: pageCell), let itemIndex = self.items[indexPath.row].index(where: { $0 === item }) {
                 pageCell.items = self.items[indexPath.row]
                 self.items[indexPath.row].remove(at: itemIndex)
-            } else if let dockCollectionView = self.dockCollectionView, dockCollectionView.visibleCells.contains(pageCell), let itemIndex = self.dockItems.index(where: { $0 === item }) {
-                pageCell.items = self.dockItems
-                self.dockItems.remove(at: itemIndex)
             }
+//            else if let dockCollectionView = self.dockCollectionView, dockCollectionView.visibleCells.contains(pageCell), let itemIndex = self.dockItems.index(where: { $0 === item }) {
+//                pageCell.items = self.dockItems
+//                self.dockItems.remove(at: itemIndex)
+//            }
             
             pageCell.delete(item: item)
             self.delegate?.didDelete(item: item, on: self)
@@ -343,7 +347,7 @@ extension AppGridManager: UICollectionViewDataSource, UICollectionViewDelegate, 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let items = collectionView == self.mainCollectionView ? self.items[indexPath.row] : self.dockItems
+        let items = self.items[indexPath.row]
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PageCell", for: indexPath) as! PageCell
         cell.items = items
@@ -351,7 +355,7 @@ extension AppGridManager: UICollectionViewDataSource, UICollectionViewDelegate, 
         cell.delegate = self
         cell.collectionView.reloadData()
         
-        if self.dockCollectionView == nil {
+        if true {
             cell.mode = .folder
         } else {
             cell.mode = collectionView == self.mainCollectionView ? .regular : .dock

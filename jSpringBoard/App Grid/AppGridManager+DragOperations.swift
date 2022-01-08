@@ -74,7 +74,7 @@ extension AppGridManager {
         
         touchPoint.x -= collectionView.contentOffset.x
         
-        if self.dockCollectionView == nil {
+        if true {
             // print(event: 020, message: #function + "shouldStartDragOutTimer" ) // dragging out of folder
             var shouldStartDragOutTimer = false
             
@@ -99,7 +99,7 @@ extension AppGridManager {
         
         var destinationIndexPath: IndexPath
         let flowLayout = pageCell.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        let appsPerRow = self.dockCollectionView == nil ? Settings.shared.appRowsOnFolder : Settings.shared.appsPerRow
+        let appsPerRow = Settings.shared.appRowsOnFolder // : Settings.shared.appsPerRow
         var isEdgeCell = false
         
         if let indexPath = pageCell.collectionView.indexPathForItem(at: touchPoint), pageCell == currentOperation.currentPageCell {
@@ -111,7 +111,7 @@ extension AppGridManager {
             
             let convertedPoint = itemCell.convert(touchPoint, from: pageCell.collectionView)
             if targetRect.contains(convertedPoint) && indexPath.row != currentOperation.currentIndexPath.row && collectionView == self.mainCollectionView {
-                if self.currentFolderOperation != nil || currentOperation.item is Folder || self.dockCollectionView == nil {
+                if self.currentFolderOperation != nil || currentOperation.item is Folder {
                     return
                 }
                 
@@ -146,10 +146,10 @@ extension AppGridManager {
             self.cancelFolderOperation()
             
             if collectionView != self.mainCollectionView {
-                if self.dockItems.count == 0 {
+                if true {
                     destinationIndexPath = IndexPath(item: 0, section: 0)
                 } else {
-                    destinationIndexPath = IndexPath(item: self.dockItems.count - 1, section: 0)
+                    destinationIndexPath = IndexPath(item: 0, section: 0)
                 }
             } else if !(self.pageTimer?.isValid ?? false) && collectionView == self.mainCollectionView {
                 self.pageTimer = Timer.scheduledTimer(timeInterval: 0.7, target: self, selector: #selector(pageTimerHandler), userInfo: 1, repeats: false)
@@ -162,12 +162,13 @@ extension AppGridManager {
             
             if let indexPath = pageCell.collectionView.indexPathForItem(at: touchPoint) {
                 destinationIndexPath = indexPath
-            } else if let dockCollectionView = self.dockCollectionView, collectionView == self.mainCollectionView && dockCollectionView.visibleCells.contains(currentOperation.currentPageCell) {
-                if self.items[self.currentPage].count < Settings.shared.appsPerPage {
-                    destinationIndexPath = IndexPath(item: self.items[self.currentPage].count + 1, section: 0)
-                } else {
-                    return
-                }
+//            } else if let dockCollectionView = self.dockCollectionView, collectionView == self.mainCollectionView && dockCollectionView.visibleCells.contains(currentOperation.currentPageCell) {
+//                if self.items[self.currentPage].count < Settings.shared.appsPerPage {
+//                    destinationIndexPath = IndexPath(item: self.items[self.currentPage].count + 1, section: 0)
+//                } else {
+//                    return
+//                }
+//            }
             } else {
                 self.cancelFolderOperation()
                 self.pageTimer?.invalidate()
@@ -206,15 +207,15 @@ extension AppGridManager {
         }
         
         if destinationIndexPath.row != currentOperation.currentIndexPath.row {
-            if let dockCollectionView = self.dockCollectionView {
-                if collectionView == dockCollectionView && !dockCollectionView.visibleCells.contains(currentOperation.currentPageCell) {
-                    self.moveToDock(operation: currentOperation, pageCell: pageCell, destinationIndexPath: destinationIndexPath)
-                    return
-                } else if collectionView == self.mainCollectionView && dockCollectionView.visibleCells.contains(currentOperation.currentPageCell) { //&& currentOperation.originalPageCell == currentOperation.currentPageCell {
-                    self.moveFromDock(operation: currentOperation, pageCell: pageCell, destinationIndexPath: destinationIndexPath)
-                    return
-                }
-            }
+//            if let dockCollectionView = self.dockCollectionView {
+//                if collectionView == dockCollectionView && !dockCollectionView.visibleCells.contains(currentOperation.currentPageCell) {
+//                    self.moveToDock(operation: currentOperation, pageCell: pageCell, destinationIndexPath: destinationIndexPath)
+//                    return
+//                } else if collectionView == self.mainCollectionView && dockCollectionView.visibleCells.contains(currentOperation.currentPageCell) { //&& currentOperation.originalPageCell == currentOperation.currentPageCell {
+//                    self.moveFromDock(operation: currentOperation, pageCell: pageCell, destinationIndexPath: destinationIndexPath)
+//                    return
+//                }
+//            }
             
             let numberOfItems = pageCell.collectionView.numberOfItems(inSection: 0)
             if currentOperation.currentIndexPath.row < numberOfItems && destinationIndexPath.row < numberOfItems {
@@ -245,9 +246,9 @@ extension AppGridManager {
         
         // fixing possible inconsistencies
         var visiblePageCells = [self.currentPageCell]
-        if let dockCollectionView = self.dockCollectionView, let pageCell = dockCollectionView.visibleCells[0] as? PageCell {
-            visiblePageCells.append(pageCell)
-        }
+//        if let dockCollectionView = self.dockCollectionView, let pageCell = dockCollectionView.visibleCells[0] as? PageCell {
+//            visiblePageCells.append(pageCell)
+//        }
         for cell in visiblePageCells.reduce([], { $0 + $1.collectionView.visibleCells }) {
             let cell = cell as! HomeItemCell
             cell.nameLabel?.alpha = 1
@@ -266,15 +267,15 @@ extension AppGridManager {
     
     func moveToDock(operation: AppDragOperation, pageCell: PageCell, destinationIndexPath: IndexPath) {
         
-        if self.dockItems.count >= Settings.shared.appsPerRow {
-            return
-        }
+//        if self.dockItems.count >= Settings.shared.appsPerRow {
+//            return
+//        }
         
         if operation.item is Folder {
             return
         }
         
-        self.dockItems.insert(operation.item, at: destinationIndexPath.row)
+//        self.dockItems.insert(operation.item, at: destinationIndexPath.row)
         
         var didRestoreSavedState = false
         if let savedState = operation.savedState {
@@ -285,7 +286,7 @@ extension AppGridManager {
             self.items[self.currentPage].remove(at: operation.currentIndexPath.row)
         }
         
-        pageCell.items = self.dockItems
+//        pageCell.items = self.dockItems
         pageCell.draggedItem = operation.item
         pageCell.collectionView.performBatchUpdates({
             pageCell.collectionView.insertItems(at: [destinationIndexPath])
@@ -325,9 +326,9 @@ extension AppGridManager {
         }
         
         self.items[self.currentPage].insert(operation.item, at: destinationIndexPath.row)
-        self.dockItems.remove(at: operation.currentIndexPath.row)
+//        self.dockItems.remove(at: operation.currentIndexPath.row)
         
-        operation.currentPageCell.items = self.dockItems
+//        operation.currentPageCell.items = self.dockItems
         operation.currentPageCell.draggedItem = operation.item
         
         operation.currentPageCell.collectionView.performBatchUpdates({

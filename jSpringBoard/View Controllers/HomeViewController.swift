@@ -14,11 +14,11 @@ class HomeViewController: UIViewController {
     @IBOutlet var backgroundImageView: UIImageView!
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var collectionViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet var dockBackgroundBlur: UIVisualEffectView!
-    @IBOutlet var dockContainerViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet var dockCollectionView: UICollectionView!
-    @IBOutlet var dockCollectionViewLeftConstraint: NSLayoutConstraint!
-    @IBOutlet var pageControl: UIPageControl!
+//    @IBOutlet var dockBackgroundBlur: UIVisualEffectView!
+//    @IBOutlet var dockContainerViewHeightConstraint: NSLayoutConstraint!
+//    @IBOutlet var dockCollectionView: UICollectionView!
+//    @IBOutlet var dockCollectionViewLeftConstraint: NSLayoutConstraint!
+//    @IBOutlet var pageControl: UIPageControl!
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return self.statusBarStyle ?? .lightContent
@@ -55,14 +55,12 @@ class HomeViewController: UIViewController {
         MaskedIconCache.shared.cacheIcons(for: self.itemsManager.pages.flatMap({ $0 }).filter { $0 is App } as! [App])
         self.gridManager = AppGridManager(viewController: self,
                                           mainCollectionView: self.collectionView,
-                                          items: self.itemsManager.pages,
-                                          dockCollectionView: self.dockCollectionView,
-                                          dockItems: self.itemsManager.dockItems)
+                                          items: self.itemsManager.pages )
         self.gridManager.delegate = self
         
-        self.pageControl.numberOfPages = self.gridManager.items.count + 1
-        self.pageControl.currentPage = 1
-        self.pageControl.pageIndicatorTintColor = UIColor.white.withAlphaComponent(0.4)
+//        self.pageControl.numberOfPages = self.gridManager.items.count + 1
+//        self.pageControl.currentPage = 1
+//        self.pageControl.pageIndicatorTintColor = UIColor.white.withAlphaComponent(0.4)
         
         self.updateLayout()
 //        self.setupParallax()
@@ -108,8 +106,8 @@ class HomeViewController: UIViewController {
         var flowLayout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         flowLayout.itemSize = self.collectionView.frame.size
         
-        flowLayout = self.dockCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        flowLayout.itemSize = self.dockCollectionView.frame.size
+//        flowLayout = self.dockCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
+//        flowLayout.itemSize = self.dockCollectionView.frame.size
     }
     
 //    func setupParallax() {
@@ -444,7 +442,7 @@ extension HomeViewController: AppGridManagerDelegate {
     func didUpdateItems(on manager: AppGridManager) {
         
         self.itemsManager.pages = manager.items
-        self.itemsManager.dockItems = manager.dockItems
+//        self.itemsManager.dockItems = manager.dockItems
         
         DispatchQueue.global(qos: .utility).async {
             self.itemsManager.persistToDisk()
@@ -452,36 +450,36 @@ extension HomeViewController: AppGridManagerDelegate {
     }
     
     func didUpdate(pageCount: Int, on manager: AppGridManager) {
-        self.pageControl.numberOfPages = pageCount + 1
+//        self.pageControl.numberOfPages = pageCount + 1
     }
     
     func didMove(toPage page: Int, on manager: AppGridManager) {
-        self.pageControl.currentPage = page + 1
+//        self.pageControl.currentPage = page + 1
     }
     
     func collectionViewDidScroll(_ collectionView: UICollectionView, on manager: AppGridManager) {
         
-        if collectionView.contentOffset.x < 0 {
-            self.dockCollectionViewLeftConstraint.constant = fabs(collectionView.contentOffset.x)
-            self.view.layoutIfNeeded()
-            
-            let progress = fabs(collectionView.contentOffset.x) / (self.view.frame.width / 2)
-            self.dockBackgroundBlur.alpha = 1 - progress
-            self.pageControl.alpha = self.dockBackgroundBlur.alpha
-        } else if collectionView.contentOffset.x >= 0 {
-            if self.dockBackgroundBlur.alpha != 1 {
-                self.dockBackgroundBlur.alpha = 1
-            }
-            
-            if self.pageControl.alpha != 1 {
-                self.pageControl.alpha = 1
-            }
-            
-            if self.dockCollectionViewLeftConstraint.constant != 0 {
-                self.dockCollectionViewLeftConstraint.constant = 0
-                self.view.layoutIfNeeded()
-            }
-        }
+//        if collectionView.contentOffset.x < 0 {
+//            self.dockCollectionViewLeftConstraint.constant = fabs(collectionView.contentOffset.x)
+//            self.view.layoutIfNeeded()
+//            
+//            let progress = fabs(collectionView.contentOffset.x) / (self.view.frame.width / 2)
+//            self.dockBackgroundBlur.alpha = 1 - progress
+//            self.pageControl.alpha = self.dockBackgroundBlur.alpha
+//        } else if collectionView.contentOffset.x >= 0 {
+//            if self.dockBackgroundBlur.alpha != 1 {
+//                self.dockBackgroundBlur.alpha = 1
+//            }
+//            
+//            if self.pageControl.alpha != 1 {
+//                self.pageControl.alpha = 1
+//            }
+//            
+//            if self.dockCollectionViewLeftConstraint.constant != 0 {
+//                self.dockCollectionViewLeftConstraint.constant = 0
+//                self.view.layoutIfNeeded()
+//            }
+//        }
     }
     
     func didSelect(app: App, on manager: AppGridManager) {
