@@ -2712,24 +2712,24 @@
         <scene sceneID="2TI-f7-XcA">
             <objects>
                 <viewController storyboardIdentifier="TodayWidgetContainerViewController" id="N3V-Ge-qCI" customClass="TodayWidgetContainerViewController" customModule="jSpringBoard" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="VOI-A1-bri">
+                    <view key="view" contentMode="scaleToFill" ambiguous="YES" id="VOI-A1-bri">
                         <rect key="frame" x="0.0" y="0.0" width="398" height="145.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bNe-9a-7Vm" customClass="JMView" customModule="jSpringBoard" customModuleProvider="target">
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bNe-9a-7Vm" customClass="JMView" customModule="jSpringBoard" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="398" height="145.5"/>
                                 <subviews>
-                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wZq-x4-bKn">
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wZq-x4-bKn">
                                         <rect key="frame" x="0.0" y="0.0" width="398" height="145.5"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="thf-Os-gRk">
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" id="thf-Os-gRk">
                                             <rect key="frame" x="0.0" y="0.0" width="398" height="145.5"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         </view>
                                         <blurEffect style="light"/>
                                     </visualEffectView>
-                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y4e-6U-HAW">
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y4e-6U-HAW">
                                         <rect key="frame" x="0.0" y="0.0" width="398" height="145.5"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="kzw-Xm-TSM">
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" id="kzw-Xm-TSM">
                                             <rect key="frame" x="0.0" y="0.0" width="398" height="145.5"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         </view>

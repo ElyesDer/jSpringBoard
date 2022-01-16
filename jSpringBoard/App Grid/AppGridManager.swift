@@ -361,6 +361,17 @@ extension AppGridManager: UIScrollViewDelegate {
 //    }
 //}
 
+extension AppGridManager : UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if let folder = self.items[indexPath.row] as? Folder {
+            return .init(width: 300, height: 89 * ( folder.pages.first?.count ?? 1 ) )
+        } else if let _ = self.items[indexPath.row] as? App {
+            return .init(width: 300, height: 89)
+        }
+        return .zero
+    }
+}
+
 // MARK: - Collection View delegate / data source
 
 extension AppGridManager: UICollectionViewDataSource, UICollectionViewDelegate {
