@@ -44,7 +44,7 @@ class FolderCell: HomeItemCell {
         
         // cleaning up possible mess from animateToFolderCreationCancelState
         self.placeholderView?.removeFromSuperview()
-        self.iconContainerView.transform = .identity
+        self.containerView.transform = .identity
         
         self.items = folder.pages
         self.collectionView.reloadData()
@@ -74,7 +74,7 @@ class FolderCell: HomeItemCell {
         let snapshotView = super.snapshotView()
         self.blurView.isHidden = false
         
-        let convertedIconFrame = self.convert(self.iconContainerView.frame, to: self.superview!)
+        let convertedIconFrame = self.convert(self.containerView.frame, to: self.superview!)
         let wallpaperSnapshot = Settings.shared.snapshotOfWallpaper(at: convertedIconFrame)!
         
         let wallpaperImageView = UIImageView(image: wallpaperSnapshot)
@@ -156,22 +156,22 @@ class FolderCell: HomeItemCell {
         guard let currentPageCell = self.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? PageCell,
             let itemCell = currentPageCell.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? HomeItemCell else { return }
         
-        let convertedRect1 = currentPageCell.convert(itemCell.iconImageView!.frame, from: itemCell)
+        let convertedRect1 = currentPageCell.convert(itemCell.containerView!.frame, from: itemCell)
         let convertedRect2 = self.convert(convertedRect1, from: currentPageCell)
         
         let imageView = UIImageView(frame: convertedRect2)
-        imageView.image = itemCell.iconImageView!.image
+//        imageView.image = itemCell.iconImageView!.image
         imageView.applyIconMask()
         self.contentView.addSubview(imageView)
-        itemCell.iconImageView!.isHidden = true
+//        itemCell.iconImageView!.isHidden = true
         
         UIView.animate(withDuration: 0.55, animations: {
-            imageView.transform = .transform(rect: imageView.frame, to: self.iconContainerView.frame)
-            self.iconContainerView.transform = CGAffineTransform.identity.scaledBy(x: 0.01, y: 0.01)
-            self.nameLabel?.alpha = 0
+            imageView.transform = .transform(rect: imageView.frame, to: self.containerView.frame)
+            self.containerView.transform = CGAffineTransform.identity.scaledBy(x: 0.01, y: 0.01)
+//            self.nameLabel?.alpha = 0
         }, completion: { _ in
             self.placeholderView = imageView
-            itemCell.iconImageView!.isHidden = false
+//            itemCell.iconImageView!.isHidden = false
             completion()
         })
     }

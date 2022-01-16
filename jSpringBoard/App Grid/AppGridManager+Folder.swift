@@ -20,7 +20,7 @@ extension AppGridManager {
         self.openFolderInfo = OpenFolderInfo(cell: cell, isNewFolder: isNewFolder)
         cell.stopAnimation()
         
-        let convertedFrame = cell.convert(cell.iconContainerView.frame, to: self.viewController.view)
+        let convertedFrame = cell.convert(cell.containerView.frame, to: self.viewController.view)
         
         let folderViewController = self.viewController.storyboard?.instantiateViewController(withIdentifier: "FolderViewController") as! FolderViewController
         folderViewController.modalPresentationStyle = .overFullScreen
@@ -59,7 +59,7 @@ extension AppGridManager {
         dragOperation.transitionToIconPlaceholder()
         
         let folderPlaceholderView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-        folderPlaceholderView.frame = itemCell.iconContainerView.frame
+        folderPlaceholderView.frame = itemCell.containerView.frame
         
         if #available(iOS 11, *) {
             folderPlaceholderView.applyIconMask()
@@ -67,7 +67,7 @@ extension AppGridManager {
             folderPlaceholderView.applyIconMaskView()
         }
         
-        itemCell.contentView.insertSubview(folderPlaceholderView, belowSubview: itemCell.iconContainerView)
+        itemCell.contentView.insertSubview(folderPlaceholderView, belowSubview: itemCell.containerView)
         
         self.cancelFolderOperation()
         if let folder = itemCell.item as? Folder, let folderCell = itemCell as? FolderCell {
@@ -81,7 +81,7 @@ extension AppGridManager {
         UIView.animate(withDuration: 0.25) {
             folderPlaceholderView.transform = CGAffineTransform.identity.scaledBy(x: 1.2, y: 1.2)
             self.currentDragOperation?.placeholderView.transform = .identity
-            itemCell.nameLabel?.alpha = 0
+//            itemCell.nameLabel?.alpha = 0
         }
     }
     
@@ -183,11 +183,11 @@ extension AppGridManager {
             })
             // operation.dragOperation.currentPageCell.
             let destinationCell = collectionView.cellForItem(at: IndexPath(item: destinationIndex, section: 0)) as! HomeItemCell
-            let iconSnapshot = destinationCell.iconContainerView.snapshotView(afterScreenUpdates: false)!
+            let iconSnapshot = destinationCell.containerView.snapshotView(afterScreenUpdates: false)!
             
             // TODO : THIS LOOKS LIKE IMPORTANT FOR UI
             
-            iconSnapshot.frame = destinationCell.convert(destinationCell.iconContainerView.frame, to: destinationCell)
+            iconSnapshot.frame = destinationCell.convert(destinationCell.containerView.frame, to: destinationCell)
             destinationCell.contentView.addSubview(iconSnapshot)
 //
 //            fatalError("Which subview should i add to")
@@ -300,7 +300,7 @@ extension AppGridManager {
             
             UIView.animate(withDuration: 0.35, animations: {
                 operation.placeholderView.transform = .identity
-                folderCell.nameLabel?.alpha = 1
+//                folderCell.nameLabel?.alpha = 1
             }, completion: { _ in
                 operation.placeholderView.removeFromSuperview()
                 folderCell.blurView.isHidden = false
@@ -330,7 +330,7 @@ extension AppGridManager {
         UIView.animate(withDuration: 0.25, animations: {
             folderOperation.placeholderView.transform = .identity
             self.currentDragOperation?.placeholderView.transform = CGAffineTransform.identity.scaledBy(x: 1.3, y: 1.3)
-            cell.nameLabel?.alpha = 1
+//            cell.nameLabel?.alpha = 1
         }, completion: { _ in
             if let folderCell = cell as? FolderCell {
                 folderCell.blurView.isHidden = false
@@ -371,13 +371,13 @@ extension AppGridManager: FolderViewControllerDelegate {
     func openAnimationWillStart(on viewController: FolderViewController) {
         guard let info = self.openFolderInfo else { return }
         
-        info.cell.iconContainerView?.isHidden = true
+        info.cell.containerView?.isHidden = true
         info.cell.blurView.isHidden = true
     }
     
     func didChange(name: String, on viewController: FolderViewController) {
         guard let info = self.openFolderInfo else { return }
-        info.cell.nameLabel?.text = name
+//        info.cell.nameLabel?.text = name
     }
     
     func didSelect(app: App, on viewController: FolderViewController) {
@@ -476,7 +476,7 @@ extension AppGridManager: FolderViewControllerDelegate {
         
         viewController.dismiss(animated: false, completion: {
             self.openFolderInfo = nil
-            info.cell.iconContainerView?.isHidden = false
+            info.cell.containerView?.isHidden = false
             info.cell.blurView.isHidden = false
             
             if self.isEditing {

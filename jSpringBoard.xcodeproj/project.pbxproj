@@ -127,6 +127,7 @@
 		84DBFD421F35719C006B3B6A /* AppGridManager+3DTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DBFD411F35719C006B3B6A /* AppGridManager+3DTouch.swift */; };
 		84DBFD441F3571D2006B3B6A /* AppGridManager+DragOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DBFD431F3571D2006B3B6A /* AppGridManager+DragOperations.swift */; };
 		84FF5DD61F65E69700E8C715 /* JMView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84968F1D1F624FC000FAC769 /* JMView.swift */; };
+		E935580A279403BB0019274D /* Daata.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9355809279403BB0019274D /* Daata.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -260,6 +261,7 @@
 		84DBFD3F1F357105006B3B6A /* AppGridManager+Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppGridManager+Folder.swift"; sourceTree = "<group>"; };
 		84DBFD411F35719C006B3B6A /* AppGridManager+3DTouch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppGridManager+3DTouch.swift"; sourceTree = "<group>"; };
 		84DBFD431F3571D2006B3B6A /* AppGridManager+DragOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppGridManager+DragOperations.swift"; sourceTree = "<group>"; };
+		E9355809279403BB0019274D /* Daata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Daata.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +284,7 @@
 				844A40B61F5BB70E0095B752 /* ItemsManagerViewController.swift */,
 				84DA11451F611AB600027C7F /* FolderManagerViewController.swift */,
 				847A5D411F5CD85300AE9B20 /* AppInfoViewController.swift */,
+				E9355809279403BB0019274D /* Daata.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -693,6 +696,7 @@
 				84A27EA21F58DDFD001E570E /* WallpaperViewController.swift in Sources */,
 				84A288D21F12EEBC00F848C4 /* HomeItem.swift in Sources */,
 				84DBFD441F3571D2006B3B6A /* AppGridManager+DragOperations.swift in Sources */,
+				E935580A279403BB0019274D /* Daata.swift in Sources */,
 				84A288D81F12EEC200F848C4 /* FolderCell.swift in Sources */,
 				84968F1F1F624FD500FAC769 /* CompassIconView.swift in Sources */,
 				84373B0D1F57A9240050373A /* SettingsViewController.swift in Sources */,

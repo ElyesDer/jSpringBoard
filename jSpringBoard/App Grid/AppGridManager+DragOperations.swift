@@ -28,7 +28,7 @@ extension AppGridManager {
         var touchPoint = gestureRecognizer.location(in: self.viewController.view)
         
         // did we hit an icon?
-        guard let view = self.viewController.view.hitTest(touchPoint, with: nil), Int(view.frame.size.width) == 60 && Int(view.frame.size.height) == 60 else { return }
+        guard let view = self.viewController.view.hitTest(touchPoint, with: nil), Int(view.frame.size.width) > 60 && Int(view.frame.size.height) > 60 else { return }
 //        let (collectionView, pageCell) = self.collectionViewAndPageCell(at: touchPoint)
         let collectionView = collectionView
         
@@ -115,8 +115,8 @@ extension AppGridManager {
 //            print(event: 021, message: #function + "indexPathForItem(at: touchPoint AT IndexPath : \(indexPath)")
             guard let itemCell = collectionView.cellForItem(at: indexPath) as? HomeItemCell else { return }
 
-            let iconCenter = itemCell.iconContainerView.center
-            let offset = 20 as CGFloat
+            let iconCenter = itemCell.containerView.center
+            let offset = 5 as CGFloat
             let targetRect = CGRect(x: iconCenter.x - offset, y: iconCenter.y - offset, width: offset * 4, height: offset * 4)
 
             let convertedPoint = itemCell.convert(touchPoint, from: collectionView)
@@ -134,9 +134,9 @@ extension AppGridManager {
                 self.pageTimer?.invalidate()
                 self.startFolderOperation(for: itemCell)
                 return
-            } else if convertedPoint.y < itemCell.iconContainerView.frame.minY {
+            } else if convertedPoint.y < itemCell.containerView.frame.minY {
                 destinationIndexPath = indexPath
-            } else if convertedPoint.y > itemCell.iconContainerView.frame.maxY {
+            } else if convertedPoint.y > itemCell.containerView.frame.maxY {
                 if (indexPath.row + 1) % appsPerRow == 0 {
                     destinationIndexPath = indexPath
                     isEdgeCell = true

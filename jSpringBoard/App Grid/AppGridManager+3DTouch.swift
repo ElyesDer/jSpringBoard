@@ -31,7 +31,7 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
             let placeholderView = cell.snapshotView()
             placeholderView.overlayView.isHidden  = true
             placeholderView.badgeOverlayView?.isHidden = true
-            placeholderView.nameLabel.isHidden = true
+//            placeholderView.nameLabel.isHidden = true
             placeholderView.center = self.viewController.view.convert(offsettedTouchPoint, from: collectionView)
             
             // 1 indexed
@@ -68,7 +68,7 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
             
             viewController.delegate = self
             viewController.viewDidAppearBlock = {
-                cell.iconContainerView.isHidden = true
+                cell.containerView.isHidden = true
                 cell.badgeLabel?.superview?.isHidden = true
                 cell.highlightOverlayView?.isHidden = true
                 cell.badgeHighlightOverlayView?.isHidden = true
@@ -87,7 +87,7 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
     func homeItemActionsViewControllerDidDismiss(_ viewController: HomeItemActionsViewController) {
         guard let operation = self.current3DTouchOperation else { return }
         
-        operation.cell.iconContainerView.isHidden = false
+        operation.cell.containerView.isHidden = false
         operation.cell.highlightOverlayView?.isHidden = false
         operation.cell.badgeHighlightOverlayView?.isHidden = false
         if operation.cell.item?.badge != nil {
@@ -107,14 +107,14 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
         guard let operation = self.current3DTouchOperation else { return }
         
         if itemAction.title.hasPrefix("Share ") {
-            operation.cell.iconContainerView.isHidden = false
+            operation.cell.containerView.isHidden = false
             
-            let renderer = UIGraphicsImageRenderer(bounds: operation.cell.iconContainerView.bounds)
+            let renderer = UIGraphicsImageRenderer(bounds: operation.cell.containerView.bounds)
             let iconSnapshot = renderer.image { context in
-                operation.cell.iconContainerView.layer.render(in: context.cgContext)
+                operation.cell.containerView.layer.render(in: context.cgContext)
             }
             
-            operation.cell.iconContainerView.isHidden = true
+            operation.cell.containerView.isHidden = true
             
             let activityViewController = UIActivityViewController(activityItems: [iconSnapshot], applicationActivities: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {

@@ -13,7 +13,7 @@ class HomeItemCellSnapshotView: UIView {
     var deleteButtonContainer: UIView?
     var badgeContainer: UIView
     var iconView: UIView
-    var nameLabel: UIView
+//    var nameLabel: UIView
     var overlayView: UIView
     var badgeOverlayView: UIView?
     
@@ -21,18 +21,20 @@ class HomeItemCellSnapshotView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(frame: CGRect, badgeContainer: UIView, iconView: UIView, nameLabel: UIView, overlayView: UIView, badgeOverlayView: UIView?) {
+    required init(frame: CGRect, badgeContainer: UIView, iconView: UIView,
+//                  nameLabel: UIView,
+                  overlayView: UIView, badgeOverlayView: UIView?) {
         
         self.badgeContainer = badgeContainer
         self.iconView = iconView
-        self.nameLabel = nameLabel
+//        self.nameLabel = nameLabel
         self.overlayView = overlayView
         self.badgeOverlayView = badgeOverlayView
         
         super.init(frame: frame)
         self.addSubview(iconView)
         self.addSubview(overlayView)
-        self.addSubview(nameLabel)
+//        self.addSubview(nameLabel)
         self.addSubview(badgeContainer)
         
         if let badgeOverlayView = badgeOverlayView {
@@ -51,9 +53,9 @@ class HomeItemCell: UICollectionViewCell {
     @IBOutlet var deleteButton: UIButton!
     @IBOutlet var deleteButtonContainer: UIView!
     @IBOutlet var badgeLabel: UILabel?
-    @IBOutlet var iconContainerView: UIView!
-    @IBOutlet var iconImageView: UIImageView?
-    @IBOutlet var nameLabel: UILabel?
+    @IBOutlet var containerView: UIView!
+//    @IBOutlet var iconImageView: UIImageView?
+//    @IBOutlet var nameLabel: UILabel?
     
     @IBOutlet var iconWidthConstraint: NSLayoutConstraint?
     @IBOutlet var iconTopConstraint: NSLayoutConstraint?
@@ -95,21 +97,21 @@ class HomeItemCell: UICollectionViewCell {
         super.awakeFromNib()
         
         self.clipsToBounds = false
-        self.iconContainerView.applyIconMask()
-        self.iconImageView?.isUserInteractionEnabled = true
+//        self.containerView.applyIconMask()
+        self.containerView?.isUserInteractionEnabled = true
         self.deleteButtonContainer?.transform = CGAffineTransform.identity.scaledBy(x: 0.0001, y: 0.0001)
         
-        iconContainerView.debugView()
+        containerView.debugView()
         debugView()
     }
     
     func createOverlayView() {
         
-        let highlightOverlayView = UIView(frame: self.iconContainerView.frame)
+        let highlightOverlayView = UIView(frame: self.containerView.frame)
         highlightOverlayView.backgroundColor = .black
         highlightOverlayView.alpha = 0
         highlightOverlayView.applyIconMask()
-        self.contentView.insertSubview(highlightOverlayView, aboveSubview: self.iconContainerView)
+        self.contentView.insertSubview(highlightOverlayView, aboveSubview: self.containerView)
         
         self.highlightOverlayView?.removeFromSuperview()
         self.highlightOverlayView = highlightOverlayView
@@ -154,8 +156,8 @@ class HomeItemCell: UICollectionViewCell {
             self.badgeLabel?.superview?.isHidden = true
         }
         
-        self.nameLabel?.text = item.name
-        self.nameLabel?.alpha = 1
+//        self.nameLabel?.text = item.name
+//        self.nameLabel?.alpha = 1
         
         NotificationCenter.default.removeObserver(self)
         if let app = item as? App {
@@ -179,29 +181,29 @@ class HomeItemCell: UICollectionViewCell {
     }
     
     @objc func updateIcon() {
-        guard let app = self.item as? App else { return }
-        if let icon = app.icon {
-            self.iconImageView?.image = icon
-        } else {
-            self.iconImageView?.image = #imageLiteral(resourceName: "default-icon")
-        }
+//        guard let app = self.item as? App else { return }
+//        if let icon = app.icon {
+////            self.iconImageView?.image = icon
+//        } else {
+////            self.iconImageView?.image = #imageLiteral(resourceName: "default-icon")
+//        }
     }
     
     func setup(liveView: UIView) {
         
         liveView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.contentView.insertSubview(liveView, aboveSubview: self.iconContainerView)
-        let centerYConstraint = self.iconContainerView.centerYAnchor.constraint(equalTo: liveView.centerYAnchor)
-        let centerXConstraint = self.iconContainerView.centerXAnchor.constraint(equalTo: liveView.centerXAnchor)
+        self.contentView.insertSubview(liveView, aboveSubview: self.containerView)
+        let centerYConstraint = self.containerView.centerYAnchor.constraint(equalTo: liveView.centerYAnchor)
+        let centerXConstraint = self.containerView.centerXAnchor.constraint(equalTo: liveView.centerXAnchor)
         self.contentView.addConstraints([centerYConstraint, centerXConstraint])
         
         let widthConstraint = liveView.widthAnchor.constraint(equalToConstant: 60)
         let heightConstraint = liveView.heightAnchor.constraint(equalToConstant: 60)
         liveView.addConstraints([widthConstraint, heightConstraint])
         
-        if liveView.frame.width != self.iconContainerView.frame.width {
-            let scaleFactor = self.iconContainerView.frame.width / liveView.frame.width
+        if liveView.frame.width != self.containerView.frame.width {
+            let scaleFactor = self.containerView.frame.width / liveView.frame.width
             liveView.transform = CGAffineTransform.identity.scaledBy(x: scaleFactor, y: scaleFactor)
         }
         
@@ -280,14 +282,14 @@ class HomeItemCell: UICollectionViewCell {
             self.createOverlayView()
         }
         
-        let iconContainerSnapshot = self.iconContainerView.snapshotView(afterScreenUpdates: true)!
-        iconContainerSnapshot.frame = self.iconContainerView.frame
+        let iconContainerSnapshot = self.containerView.snapshotView(afterScreenUpdates: true)!
+        iconContainerSnapshot.frame = self.containerView.frame
         
         let badgeContainerSnapshot = self.badgeLabel!.superview!.snapshotView(afterScreenUpdates: true)!
         badgeContainerSnapshot.frame = self.badgeLabel!.superview!.frame
         
-        let nameLabelSnapshot = self.nameLabel!.snapshotView(afterScreenUpdates: true)!
-        nameLabelSnapshot.frame = self.nameLabel!.frame
+//        let nameLabelSnapshot = self.nameLabel!.snapshotView(afterScreenUpdates: true)!
+//        nameLabelSnapshot.frame = self.nameLabel!.frame
         
         let overlaySnapshot = self.highlightOverlayView!.snapshotView(afterScreenUpdates: true)!
         overlaySnapshot.frame = self.highlightOverlayView!.frame
@@ -298,7 +300,9 @@ class HomeItemCell: UICollectionViewCell {
             badgeOverlaySnapshot?.frame = badgeOverlayView.frame
         }
         
-        let snapshotView = HomeItemCellSnapshotView(frame: self.bounds, badgeContainer: badgeContainerSnapshot, iconView: iconContainerSnapshot, nameLabel: nameLabelSnapshot, overlayView: overlaySnapshot, badgeOverlayView: badgeOverlaySnapshot)
+        let snapshotView = HomeItemCellSnapshotView(frame: self.bounds, badgeContainer: badgeContainerSnapshot, iconView: iconContainerSnapshot,
+//                                                    nameLabel: nameLabelSnapshot,
+                                                    overlayView: overlaySnapshot, badgeOverlayView: badgeOverlaySnapshot)
         
         if let deleteButtonContainer = self.deleteButtonContainer {
             let originalTransform = deleteButtonContainer.transform

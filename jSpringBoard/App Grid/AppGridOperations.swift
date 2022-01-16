@@ -69,7 +69,7 @@ class AppDragOperation {
             self.placeholderView.deleteButtonContainer?.alpha = 0
             self.placeholderView.badgeContainer.alpha = 0
             self.placeholderView.badgeOverlayView?.alpha = 0
-            self.placeholderView.nameLabel.alpha = 0
+//            self.placeholderView.nameLabel.alpha = 0
         }
     }
     
@@ -79,7 +79,7 @@ class AppDragOperation {
             self.placeholderView.deleteButtonContainer?.alpha = 1
             self.placeholderView.badgeContainer.alpha = 1
             self.placeholderView.badgeOverlayView?.alpha = 1
-            self.placeholderView.nameLabel.alpha = 1
+//            self.placeholderView.nameLabel.alpha = 1
         }
     }
     

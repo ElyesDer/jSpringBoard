@@ -171,7 +171,7 @@ extension PageCell: UICollectionViewDataSource, UICollectionViewDelegate {
             cell.delegate = self
             
             if self.mode == .dock && Settings.shared.isD22 {
-                cell.nameLabel?.isHidden = true
+//                cell.nameLabel?.isHidden = true
             }
             
             return cell
