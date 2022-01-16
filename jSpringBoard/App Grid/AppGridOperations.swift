@@ -10,12 +10,14 @@ import UIKit
 
 class AppDragOperation {
     
+    typealias EndOperationGroup = (current : Int, destination : Int)
+    
     let item: HomeItem
     
-    let originalPageCell: PageCell
+//    let originalPageCell: PageCell
     let originalIndexPath: IndexPath
     
-    var currentPageCell: PageCell
+//    var currentPageCell: PageCell
     var currentIndexPath: IndexPath
     
     let placeholderView: HomeItemCellSnapshotView
@@ -24,14 +26,22 @@ class AppDragOperation {
     var needsUpdate = false
     var savedState: [[HomeItem]]?
     
-    required init(placeholderView: HomeItemCellSnapshotView, dragOffset: CGSize, item: HomeItem, originalPageCell: PageCell, originalIndexPath: IndexPath) {
+    var currentItems : [HomeItem] = []
+    
+    var endOperationParameter : EndOperationGroup?
+    
+    required init(placeholderView: HomeItemCellSnapshotView,
+                  dragOffset: CGSize,
+                  item: HomeItem,
+//                  originalPageCell: PageCell,
+                  originalIndexPath: IndexPath) {
         
         self.item = item
         
-        self.originalPageCell = originalPageCell
+//        self.originalPageCell = originalPageCell
         self.originalIndexPath = originalIndexPath
         
-        self.currentPageCell = originalPageCell
+//        self.currentPageCell = originalPageCell
         self.currentIndexPath = originalIndexPath
         
         self.placeholderView = placeholderView
@@ -75,8 +85,12 @@ class AppDragOperation {
     
     func copy() -> AppDragOperation {
         
-        let newOperation = AppDragOperation(placeholderView: self.placeholderView, dragOffset: self.dragOffset, item: self.item, originalPageCell: self.originalPageCell, originalIndexPath: self.originalIndexPath)
-        newOperation.currentPageCell = self.currentPageCell
+        let newOperation = AppDragOperation(placeholderView: self.placeholderView, dragOffset: self.dragOffset,
+                                            item: self.item,
+//                                            originalPageCell: self.originalPageCell,
+                                            originalIndexPath: self.originalIndexPath
+        )
+//        newOperation.currentPageCell = self.currentPageCell
         newOperation.currentIndexPath = self.currentIndexPath
         return newOperation
     }

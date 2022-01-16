@@ -75,7 +75,9 @@ class FolderViewController: UIViewController {
         self.nameTextField.text = self.folder.name
         self.leaveTextFieldEditingMode()
         
-        self.gridManager = AppGridManager(viewController: self, mainCollectionView: self.collectionView, items: self.folder.pages)
+        self.gridManager = AppGridManager(viewController: self,
+                                          mainCollectionView: self.collectionView,
+                                          items: self.folder.pages.first ?? [])
         self.gridManager.delegate = self
         
         if self.gridManager.items.count == 1 {
@@ -134,14 +136,14 @@ class FolderViewController: UIViewController {
         self.placeholderBackgroundViewTopConstraint.constant = self.sourcePoint.y
         self.placeholderBackgroundViewLeftConstraint.constant = self.sourcePoint.x
         
-        let page = self.gridManager.items[page]
+//        let page = self.gridManager.items
         for (index, imageView) in self.placeholderViewIcons.sorted(by: { $0.tag < $1.tag }).enumerated() {
-            if index > page.count - 1 {
+            if index > self.gridManager.items.count - 1 {
                 imageView.isHidden = true
                 continue
             }
             
-            if let app = page[index] as? App {
+            if let app = self.gridManager.items[index] as? App {
                 if let draggedItem = self.dragOperationTransfer?.operation.item, draggedItem === app {
                     imageView.isHidden = true
                 } else {
@@ -320,7 +322,7 @@ class FolderViewController: UIViewController {
         self.placeholderViewRowLastItemRightConstraints.forEach { $0.constant = 0 }
         
         self.setupPlaceholder(forPage: self.pageControl.currentPage)
-        self.gridManager.leaveEditingMode()
+        self.gridManager.leaveEditingMode(suppressHaptic: false)
         
         self.delegate?.dismissAnimationWillStart(currentPage: self.pageControl.currentPage, updatedPages: self.gridManager.items as! [[App]], on: self)
         let animation = UIViewPropertyAnimator(duration: 0.35, controlPoint1: CGPoint(x: 0.37, y: 0.13), controlPoint2: CGPoint(x: 0, y: 1)) {
@@ -388,9 +390,9 @@ extension FolderViewController: AppGridManagerDelegate {
     
     func didDelete(item: HomeItem, on manager: AppGridManager) {
         
-        if self.gridManager.items.reduce(0, { $0 + $1.count }) == 0 {
-            self.dismiss(nil)
-        }
+//        if self.gridManager.items.reduce(0, { $0 + $1.count }) == 0 {
+//            self.dismiss(nil)
+//        }
     }
     
     func didSelect(app: App, on manager: AppGridManager) {

@@ -17,11 +17,12 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
         
         // did we hit an icon?
         guard let view = self.viewController.view.hitTest(touchPoint, with: nil), Int(view.frame.size.width) == 60 && Int(view.frame.size.height) == 60 else { return }
-        let (collectionView, pageCell) = self.collectionViewAndPageCell(at: touchPoint)
+//        let (collectionView, pageCell) = self.collectionViewAndPageCell(at: touchPoint)
+        let collectionView = collectionView
         touchPoint = gestureRecognizer.location(in: collectionView)
         touchPoint.x -= collectionView.contentOffset.x
         
-        if let indexPath = pageCell.collectionView.indexPathForItem(at: touchPoint), let cell = pageCell.collectionView.cellForItem(at: indexPath) as? HomeItemCell, let item = cell.item {
+        if let indexPath = collectionView.indexPathForItem(at: touchPoint), let cell = self.collectionView.cellForItem(at: indexPath) as? HomeItemCell, let item = cell.item {
             let dragOffset = CGSize(width: cell.center.x - touchPoint.x, height: cell.center.y - touchPoint.y)
             var offsettedTouchPoint = gestureRecognizer.location(in: collectionView)
             offsettedTouchPoint.x += dragOffset.width
@@ -37,7 +38,7 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
             var row: Int
             var column: Int
             
-            if collectionView == self.mainCollectionView {
+            if collectionView == self.collectionView {
                 var appsPerRow: Int
 //                if self.dockCollectionView == nil {
 //                    appsPerRow = Settings.shared.appsPerRowOnFolder

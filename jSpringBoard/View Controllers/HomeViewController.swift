@@ -55,7 +55,7 @@ class HomeViewController: UIViewController {
         MaskedIconCache.shared.cacheIcons(for: self.itemsManager.pages.flatMap({ $0 }).filter { $0 is App } as! [App])
         self.gridManager = AppGridManager(viewController: self,
                                           mainCollectionView: self.collectionView,
-                                          items: self.itemsManager.pages )
+                                          items: self.itemsManager.pages.first ?? [] )
         self.gridManager.delegate = self
         
 //        self.pageControl.numberOfPages = self.gridManager.items.count + 1
@@ -74,12 +74,14 @@ class HomeViewController: UIViewController {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateWallpaper), name: .wallpaperUpdated, object: nil)
+        
+        collectionView.debugView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        self.collectionView.contentInset = UIEdgeInsets(top: 0, left: self.view.frame.width, bottom: 0, right: 0)
+//        self.collectionView.contentInset = UIEdgeInsets(top: 0, left: self.view.frame.width, bottom: 0, right: 0)
         
         if self.homeButtonManager == nil && !self.readOnlyMode {
             self.homeButtonManager = VirtualHomeButtonManager(view: UIApplication.shared.keyWindow!)
@@ -103,8 +105,8 @@ class HomeViewController: UIViewController {
         
         self.lastWidth = self.view.frame.width
         
-        var flowLayout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        flowLayout.itemSize = self.collectionView.frame.size
+//        var flowLayout = self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+//        flowLayout.itemSize = self.collectionView.frame.size
         
 //        flowLayout = self.dockCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
 //        flowLayout.itemSize = self.dockCollectionView.frame.size
@@ -441,12 +443,12 @@ extension HomeViewController: AppGridManagerDelegate {
     
     func didUpdateItems(on manager: AppGridManager) {
         
-        self.itemsManager.pages = manager.items
-//        self.itemsManager.dockItems = manager.dockItems
-        
-        DispatchQueue.global(qos: .utility).async {
-            self.itemsManager.persistToDisk()
-        }
+//        self.itemsManager.pages = manager.items.first ?? []
+////        self.itemsManager.dockItems = manager.dockItems
+//
+//        DispatchQueue.global(qos: .utility).async {
+//            self.itemsManager.persistToDisk()
+//        }
     }
     
     func didUpdate(pageCount: Int, on manager: AppGridManager) {

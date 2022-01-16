@@ -13,9 +13,9 @@ class FolderCell: HomeItemCell {
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var blurView: UIVisualEffectView!
     
-    var currentPage: Int {
-        return Int(self.collectionView.contentOffset.x) / Int(self.collectionView.frame.size.width)
-    }
+//    var currentPage: Int {
+//        return Int(self.collectionView.contentOffset.x) / Int(self.collectionView.frame.size.width)
+//    }
     
     private var items: [[App]] = [] {
         didSet {
@@ -113,8 +113,9 @@ class FolderCell: HomeItemCell {
         let appsPerPage = Settings.shared.appsPerPageOnFolder
         for (index, page) in self.items.enumerated() {
             if page.count < appsPerPage {
-                if index != self.currentPage {
-                    self.moveTo(page: index, animated: animated)
+//                fatalError("MEH ?")
+                if index != 0 {
+                    self.moveTo(page: 0, animated: animated)
                 }
                 
                 break
@@ -130,7 +131,7 @@ class FolderCell: HomeItemCell {
     }
     
     func move(view: UIView, toCellPositionAtIndex index: Int, completion: (() -> Void)? = nil) {
-        guard let currentPageCell = self.collectionView.cellForItem(at: IndexPath(item: self.currentPage, section: 0)) as? PageCell,
+        guard let currentPageCell = self.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? PageCell,
             let flowLayout = currentPageCell.collectionView.collectionViewLayout as? UICollectionViewFlowLayout,
             let layoutAttributes = flowLayout.layoutAttributesForItem(at: IndexPath(item: index, section: 0)) else { return }
         
@@ -152,7 +153,7 @@ class FolderCell: HomeItemCell {
     
     // what the hell is this name really
     func animateToFolderCreationCancelState(completion: @escaping () -> Void) {
-        guard let currentPageCell = self.collectionView.cellForItem(at: IndexPath(item: self.currentPage, section: 0)) as? PageCell,
+        guard let currentPageCell = self.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? PageCell,
             let itemCell = currentPageCell.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? HomeItemCell else { return }
         
         let convertedRect1 = currentPageCell.convert(itemCell.iconImageView!.frame, from: itemCell)

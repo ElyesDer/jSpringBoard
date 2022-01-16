@@ -26,7 +26,7 @@ extension AppGridManager {
         folderViewController.modalPresentationStyle = .overFullScreen
         folderViewController.isEditing = self.isEditing
         folderViewController.folder = cell.item as! Folder
-        folderViewController.currentPage = cell.currentPage
+//        folderViewController.currentPage = cell.currentPage
         folderViewController.sourcePoint = convertedFrame.origin
         folderViewController.startInRename = startInRename
         folderViewController.delegate = self
@@ -114,7 +114,9 @@ extension AppGridManager {
         // usually state is only updated when a drag operation ends
         // but folder operations need an updated state and they happen
         // during a drag operation
-        self.updateState(forPageCell: folderOperation.dragOperation.currentPageCell)
+//        self.updateState(forPageCell: folderOperation.dragOperation.currentPageCell)
+//        self.updpateVisibleCells()
+//        self.updateState()
         
         if let creationOperation = folderOperation as? FolderCreationOperation {
             self.commit(folderCreationOperation: creationOperation, didDrop: didDrop)
@@ -123,49 +125,55 @@ extension AppGridManager {
         }
     }
     
-    func showFolderPostOperation(_ operation: FolderOperation, page: Int, sourceIndex: Int, destinationIndex: Int, folderIndexPath: IndexPath, isNewFolder: Bool = false) {
+    func showFolderPostOperation(_ operation: FolderOperation,
+//                                 page: Int,
+                                 sourceIndex: Int, destinationIndex: Int, folderIndexPath: IndexPath, isNewFolder: Bool = false) {
         
         let folderIndexPath = IndexPath(item: destinationIndex, section: 0)
-        operation.dragOperation.currentPageCell.items = self.items[page]
+        operation.dragOperation.currentItems = self.items
         
-        let folderCell = operation.dragOperation.currentPageCell.collectionView.cellForItem(at: folderIndexPath) as! FolderCell
-        let folderViewController = self.showFolder(from: folderCell, isNewFolder: isNewFolder)
-        folderViewController.openAnimationDidEndBlock = { [unowned folderViewController] in
-            self.items[page].remove(at: sourceIndex)
-            operation.dragOperation.currentPageCell.items = self.items[page]
-            operation.dragOperation.currentPageCell.collectionView.performBatchUpdates({
-                operation.dragOperation.currentPageCell.collectionView.deleteItems(at: [IndexPath(item: sourceIndex, section: 0)])
+        let folderCell = collectionView.cellForItem(at: folderIndexPath) as! FolderCell
+//        let folderViewController = self.showFolder(from: folderCell, isNewFolder: isNewFolder)
+//        folderViewController.openAnimationDidEndBlock = { [unowned folderViewController] in
+            self.items.remove(at: sourceIndex)
+            operation.dragOperation.currentItems = self.items
+            self.collectionView.performBatchUpdates({
+                self.collectionView.deleteItems(at: [IndexPath(item: sourceIndex, section: 0)])
             }, completion: { _ in
-                folderCell.stopAnimation()
-                let convertedFrame = folderCell.convert(folderCell.iconContainerView.frame, to: self.viewController.view)
-                folderViewController.sourcePoint = convertedFrame.origin
-                
-                if !isNewFolder {
-                    folderCell.blurView.isHidden = false
-                }
-                
-                operation.placeholderView.removeFromSuperview()
+//                folderCell.stopAnimation()
+////                let convertedFrame = folderCell.convert(folderCell.iconContainerView.frame, to: self.viewController.view)
+////                folderViewController.sourcePoint = convertedFrame.origin
+//
+//                if !isNewFolder {
+//                    folderCell.blurView.isHidden = false
+//                }
+//
+//                operation.placeholderView.removeFromSuperview()
                 self.currentFolderOperation = nil
             })
-        }
+//        }
     }
     
     func commit(folderCreationOperation operation: FolderCreationOperation, didDrop: Bool) {
-        guard let page = self.items.index(where: { $0.contains { $0 === operation.destinationApp } }),
-            let sourceIndex = self.items[page].index(where: { $0 === operation.dragOperation.item }),
-            let destinationIndex = self.items[page].index(where: { $0 === operation.destinationApp }),
+        
+        guard
+//            let page = self.items.index(where: { $0.contains { $0 === operation.destinationApp } }),
+            let sourceIndex = self.items.index(where: { $0 === operation.dragOperation.item }),
+            let destinationIndex = self.items.index(where: { $0 === operation.destinationApp }),
             let sourceApp = operation.dragOperation.item as? App else { return }
         
         let newFolder = Folder(name: NSLocalizedString("New Folder", comment: ""), pages: [[operation.destinationApp, sourceApp]])
         newFolder.isNewFolder = true
-        self.items[page][destinationIndex] = newFolder
+        self.items[destinationIndex] = newFolder
         
         let folderIndexPath = IndexPath(item: destinationIndex, section: 0)
-        operation.dragOperation.currentPageCell.items = self.items[page]
+        operation.dragOperation.currentItems = self.items
         
         if !didDrop {
-            operation.dragOperation.currentPageCell.collectionView.reloadItems(at: [folderIndexPath])
-            self.showFolderPostOperation(operation, page: page, sourceIndex: sourceIndex, destinationIndex: destinationIndex, folderIndexPath: folderIndexPath, isNewFolder: true)
+            collectionView.reloadItems(at: [folderIndexPath])
+            self.showFolderPostOperation(operation,
+//                                         page: page,
+                                         sourceIndex: sourceIndex, destinationIndex: destinationIndex, folderIndexPath: folderIndexPath, isNewFolder: true)
             newFolder.isNewFolder = false
         } else {
             UIView.animate(withDuration: 0.25, animations: {
@@ -173,28 +181,36 @@ extension AppGridManager {
                 operation.dragOperation.placeholderView.overlayView.alpha = 0
                 operation.dragOperation.placeholderView.badgeOverlayView?.alpha = 0
             })
-            
-            let destinationCell = operation.dragOperation.currentPageCell.collectionView.cellForItem(at: IndexPath(item: destinationIndex, section: 0)) as! HomeItemCell
+            // operation.dragOperation.currentPageCell.
+            let destinationCell = collectionView.cellForItem(at: IndexPath(item: destinationIndex, section: 0)) as! HomeItemCell
             let iconSnapshot = destinationCell.iconContainerView.snapshotView(afterScreenUpdates: false)!
-            iconSnapshot.frame = destinationCell.convert(destinationCell.iconContainerView.frame, to: operation.dragOperation.currentPageCell)
-            operation.dragOperation.currentPageCell.contentView.addSubview(iconSnapshot)
+            
+            // TODO : THIS LOOKS LIKE IMPORTANT FOR UI
+            
+            iconSnapshot.frame = destinationCell.convert(destinationCell.iconContainerView.frame, to: destinationCell)
+            destinationCell.contentView.addSubview(iconSnapshot)
+//
+//            fatalError("Which subview should i add to")
             
             let convertedIconFrame = operation.dragOperation.placeholderView.convert(operation.dragOperation.placeholderView.iconView.frame, to: operation.dragOperation.placeholderView.superview!)
             operation.dragOperation.placeholderView.iconView.frame = convertedIconFrame
             operation.dragOperation.placeholderView.superview!.addSubview(operation.dragOperation.placeholderView.iconView)
             operation.dragOperation.placeholderView.removeFromSuperview()
             
-            operation.dragOperation.currentPageCell.collectionView.performBatchUpdates({
-                operation.dragOperation.currentPageCell.collectionView.reloadItems(at: [folderIndexPath])
+            //            let array = Array(arrayLiteral: sourceIndex)
+            collectionView.performBatchUpdates({
+                collectionView.reloadItems(at: [folderIndexPath])
+//                collectionView.reloadItems(at: [.init(row: sourceIndex, section: 0)])
+//                collectionView.reloadData()
             }, completion: { _ in
-                let folderCell = operation.dragOperation.currentPageCell.collectionView.cellForItem(at: folderIndexPath) as! FolderCell
+                let folderCell = self.collectionView.cellForItem(at: folderIndexPath) as! FolderCell
                 folderCell.move(view: iconSnapshot, toCellPositionAtIndex: 0)
                 folderCell.move(view: operation.dragOperation.placeholderView.iconView, toCellPositionAtIndex: 1) {
                     iconSnapshot.removeFromSuperview()
                     operation.dragOperation.placeholderView.iconView.removeFromSuperview()
                     self.currentFolderOperation = nil
                     self.currentDragOperation = nil
-                    self.showFolderPostOperation(operation, page: page, sourceIndex: sourceIndex, destinationIndex: destinationIndex, folderIndexPath: folderIndexPath, isNewFolder: true)
+                    self.showFolderPostOperation(operation, sourceIndex: sourceIndex, destinationIndex: destinationIndex, folderIndexPath: folderIndexPath, isNewFolder: true)
                     
                     newFolder.isNewFolder = false
                 }
@@ -203,18 +219,21 @@ extension AppGridManager {
     }
     
     func commit(folderDropOperation operation: FolderDropOperation, didDrop: Bool) {
-        guard let page = self.items.index(where: { $0.contains { $0 === operation.folder } }),
-            let sourceIndex = self.items[page].index(where: { $0 === operation.dragOperation.item }),
-            let destinationIndex = self.items[page].index(where: { $0 === operation.folder }),
+        guard
+//            let page = self.items.index(where: { $0.contains { $0 === operation.folder } }),
+            let sourceIndex = self.items.index(where: { $0 === operation.dragOperation.item }),
+            let destinationIndex = self.items.index(where: { $0 === operation.folder }),
             let sourceApp = operation.dragOperation.item as? App else { return }
         
         let folderIndexPath = IndexPath(item: destinationIndex, section: 0)
-        let folderCell = operation.dragOperation.currentPageCell.collectionView.cellForItem(at: folderIndexPath) as! FolderCell
+        let folderCell = collectionView.cellForItem(at: folderIndexPath) as! FolderCell
         let item = folderCell.item as! Folder
-        item.pages[folderCell.currentPage].append(sourceApp)
+        item.pages[0].append(sourceApp)
         
         if !didDrop {
-            self.showFolderPostOperation(operation, page: page, sourceIndex: sourceIndex, destinationIndex: destinationIndex, folderIndexPath: folderIndexPath)
+            self.showFolderPostOperation(operation,
+//                                         page: page,
+                                         sourceIndex: sourceIndex, destinationIndex: destinationIndex, folderIndexPath: folderIndexPath)
             self.cancelFolderOperation()
         } else {
             UIView.animate(withDuration: 0.25, animations: {
@@ -228,22 +247,23 @@ extension AppGridManager {
             operation.dragOperation.placeholderView.superview!.addSubview(operation.dragOperation.placeholderView.iconView)
             operation.dragOperation.placeholderView.removeFromSuperview()
             
-            let folderCell = operation.dragOperation.currentPageCell.collectionView.cellForItem(at: folderIndexPath) as! FolderCell
-            folderCell.move(view: operation.dragOperation.placeholderView.iconView, toCellPositionAtIndex: item.pages[folderCell.currentPage].count - 1) {
+            let folderCell = collectionView.cellForItem(at: folderIndexPath) as! FolderCell
+            folderCell.move(view: operation.dragOperation.placeholderView.iconView, toCellPositionAtIndex: item.pages[0].count - 1) {
                 var didRestoreSavedState = false
                 if let savedState = operation.dragOperation.savedState {
-                    self.items = savedState
-                    operation.dragOperation.currentPageCell.items = self.items[page]
+                    fatalError("We saving or something")
+//                    self.items = savedState
+                    operation.dragOperation.currentItems = self.items
                     didRestoreSavedState = true
                 } else if folderIndexPath.row < sourceIndex {
-                    self.items[page].remove(at: sourceIndex)
-                    operation.dragOperation.currentPageCell.items = self.items[page]
+                    self.items.remove(at: sourceIndex)
+                    operation.dragOperation.currentItems = self.items
                 }
                 
                 self.currentFolderOperation = nil
                 self.currentDragOperation = nil
                 
-                operation.dragOperation.currentPageCell.collectionView.performBatchUpdates({
+                self.collectionView.performBatchUpdates({
                     folderCell.item = item
                     operation.dragOperation.placeholderView.iconView.removeFromSuperview()
                     folderCell.moveToFirstAvailablePage()
@@ -252,10 +272,10 @@ extension AppGridManager {
                     // we should wait until it's all updated otherwise bad things
                     // happen (bad things meaning ugly fade animations)
                     if folderIndexPath.row < sourceIndex {
-                        operation.dragOperation.currentPageCell.collectionView.deleteItems(at: [IndexPath(item: sourceIndex, section: 0)])
+                        self.collectionView.deleteItems(at: [IndexPath(item: sourceIndex, section: 0)])
                         
                         if didRestoreSavedState {
-                            operation.dragOperation.currentPageCell.collectionView.insertItems(at: [IndexPath(item: Settings.shared.appsPerPage - 1, section: 0)])
+                            self.collectionView.insertItems(at: [IndexPath(item: Settings.shared.appsPerPage - 1, section: 0)])
                         }
                     }
                 }, completion: { _ in
@@ -263,15 +283,15 @@ extension AppGridManager {
                     
                     if folderIndexPath.row > sourceIndex {
                         if !didRestoreSavedState {
-                            self.items[page].remove(at: sourceIndex)
+                            self.items.remove(at: sourceIndex)
                         }
                         
-                        operation.dragOperation.currentPageCell.items = self.items[page]
-                        operation.dragOperation.currentPageCell.collectionView.performBatchUpdates({
-                            operation.dragOperation.currentPageCell.collectionView.deleteItems(at: [IndexPath(item: sourceIndex, section: 0)])
+                        operation.dragOperation.currentItems = self.items
+                        self.collectionView.performBatchUpdates({
+                            self.collectionView.deleteItems(at: [IndexPath(item: sourceIndex, section: 0)])
                             
                             if didRestoreSavedState {
-                                operation.dragOperation.currentPageCell.collectionView.insertItems(at: [IndexPath(item: Settings.shared.appsPerPage - 1, section: 0)])
+                                self.collectionView.insertItems(at: [IndexPath(item: Settings.shared.appsPerPage - 1, section: 0)])
                             }
                         }, completion: nil)
                     }
@@ -290,13 +310,17 @@ extension AppGridManager {
     }
     
     func cancelFolderOperation() {
-        guard let folderOperation = self.currentFolderOperation,
-            let index = folderOperation.dragOperation.currentPageCell.items.index(where: { $0 === folderOperation.item }),
-            let cell = folderOperation.dragOperation.currentPageCell.collectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? HomeItemCell,
-            !folderOperation.isDismissing else { return }
+//        print(event: 120, message: #function + " CANCELING FOLDER TIMER ")
+        guard
+            let folderOperation = self.currentFolderOperation,
+            let index = self.items.index(where: { $0 === folderOperation.item }),
+            let cell = collectionView.cellForItem(at: IndexPath(item: index, section: 0)) as? HomeItemCell,
+            !folderOperation.isDismissing else {
+                return
+            }
         
         folderOperation.dragOperation.transitionFromIconPlaceholder()
-        print(event: 120, message: #function + " CANCELING FOLDER TIMER ")
+        print(event: 121, message: #function + "PASSED GUARD CHECK CANCELING FOLDER TIMER ")
         self.folderTimer?.invalidate()
         self.folderTimer = nil
         self.currentFolderOperation = nil
@@ -320,9 +344,9 @@ extension AppGridManager {
     func updateFolderDragOutFlags() {
         guard let operation = self.currentDragOperation else { return }
         
-        if operation.placeholderView.center.y < self.mainCollectionView.superview!.frame.minY {
+        if operation.placeholderView.center.y < self.collectionView.superview!.frame.minY {
             self.ignoreDragOutOnTop = true
-        } else if operation.placeholderView.center.y > self.mainCollectionView.superview!.frame.maxY {
+        } else if operation.placeholderView.center.y > self.collectionView.superview!.frame.maxY {
             self.ignoreDragOutOnBottom = true
         }
     }
@@ -330,11 +354,12 @@ extension AppGridManager {
     @objc func folderRemoveTimerHandler() {
         guard let operation = self.currentDragOperation else { return }
         
-        self.updateState(forPageCell: operation.currentPageCell)
-        var pageCellIndexPath = self.mainCollectionView.indexPath(for: operation.currentPageCell)!
-        self.items[pageCellIndexPath.row].remove(at: operation.currentIndexPath.row)
-        operation.currentPageCell.items = self.items[pageCellIndexPath.row]
-        operation.currentPageCell.collectionView.deleteItems(at: [operation.currentIndexPath])
+//        self.updpateVisibleCells()
+//        self.updateState() // forPageCell: operation.currentPageCell
+//        var pageCellIndexPath = self.collectionView.indexPath(for: 0)! // operation.currentPageCell
+        self.items.remove(at: operation.currentIndexPath.row)
+        operation.currentItems = self.items
+        collectionView.deleteItems(at: [operation.currentIndexPath])
         
         let transfer = AppDragOperationTransfer(gestureRecognizer: self.longPressRecognizer, operation: operation)
         self.delegate?.didBeginFolderDragOut(transfer: transfer, on: self)
@@ -360,31 +385,36 @@ extension AppGridManager: FolderViewControllerDelegate {
     }
     
     func didEnterEditingMode(on viewController: FolderViewController) {
-        self.enterEditingMode()
+        self.enterEditingMode(suppressHaptic: false)
     }
     
     func didBeginFolderDragOut(withTransfer transfer: AppDragOperationTransfer, on viewController: FolderViewController) {
         guard let info = self.openFolderInfo else { return }
         
-        let folderIndex = self.items[self.currentPage].index(where: { $0 === info.folder })!
-        let pageCell = self.currentPageCell
+        let folderIndex = self.items.index(where: { $0 === info.folder })!
+//        let pageCell = self.currentPageCell
         
         if info.folder.pages.flatMap({ $0 }).count == 0 {
-            self.items[self.currentPage].append(transfer.operation.item)
-            self.items[self.currentPage].remove(at: folderIndex)
+            self.items.append(transfer.operation.item)
+            self.items.remove(at: folderIndex)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.45, execute: {
                 self.perform(transfer: transfer)
-                pageCell.draggedItem = transfer.operation.item
-                pageCell.items = self.items[self.currentPage]
                 
-                self.currentDragOperation?.currentPageCell = pageCell
-                self.currentDragOperation?.currentIndexPath = IndexPath(item: pageCell.collectionView(pageCell.collectionView, numberOfItemsInSection: 0) - 1, section: 0)
+                self.draggedItem = transfer.operation.item
+//                pageCell.draggedItem = transfer.operation.item
+//                pageCell.items = self.items[self.currentPage]
+                
+//                self.currentDragOperation?.currentPageCell = pageCell
+                self.currentDragOperation?.currentItems = self.items
+                
+                self.currentDragOperation?.currentIndexPath = IndexPath(row: folderIndex , section: 0)
+//                self.currentDragOperation?.currentIndexPath = IndexPath(item: pageCell.collectionView(pageCell.collectionView, numberOfItemsInSection: 0) - 1, section: 0)
                 self.currentDragOperation?.needsUpdate = false
                 
-                pageCell.collectionView.performBatchUpdates({
-                    pageCell.collectionView.deleteItems(at: [IndexPath(item: folderIndex, section: 0)])
-                    pageCell.collectionView.insertItems(at: [IndexPath(item: self.items[self.currentPage].count - 1, section: 0)])
+                self.collectionView.performBatchUpdates({
+                    self.collectionView.deleteItems(at: [IndexPath(item: folderIndex, section: 0)])
+                    self.collectionView.insertItems(at: [IndexPath(item: self.items.count - 1, section: 0)])
                 }, completion: { _ in
                     // if the state is "possible" the gesture ended before the transition
                     // could be completed, so we'll force end the operation.
@@ -395,30 +425,30 @@ extension AppGridManager: FolderViewControllerDelegate {
             })
         } else {
             self.perform(transfer: transfer)
-            self.currentDragOperation?.currentPageCell = pageCell
+//            self.currentDragOperation?.currentPageCell = pageCell
             
-            if self.items[self.currentPage].count == Settings.shared.appsPerPage {
-                self.currentDragOperation?.savedState = self.items
-                self.moveLastItem(inPage: self.currentPage)
+            if self.items.count == Settings.shared.appsPerPage {
+//                self.currentDragOperation?.savedState = self.items
+//                self.moveLastItem(inPage: self.currentPage)
             }
             
-            self.items[self.currentPage].append(transfer.operation.item)
-            pageCell.draggedItem = transfer.operation.item
+            self.items.append(transfer.operation.item)
+            draggedItem = transfer.operation.item
             
-            var indexPathRow = pageCell.collectionView(pageCell.collectionView, numberOfItemsInSection: 0)
+            var indexPathRow = collectionView(collectionView, numberOfItemsInSection: 0)
             if indexPathRow == Settings.shared.appsPerPage {
                 indexPathRow -= 1
             }
             let indexPath = IndexPath(item: indexPathRow, section: 0)
             self.currentDragOperation?.currentIndexPath = indexPath
             self.currentDragOperation?.needsUpdate = false
-            pageCell.items = self.items[self.currentPage]
+//            items = self.items
             
-            pageCell.collectionView.performBatchUpdates({
+            collectionView.performBatchUpdates({
                 if self.currentDragOperation?.savedState == nil {
-                    pageCell.collectionView.insertItems(at: [indexPath])
+                    self.collectionView.insertItems(at: [indexPath])
                 } else {
-                    pageCell.collectionView.reloadItems(at: [indexPath])
+                    self.collectionView.reloadItems(at: [indexPath])
                 }
             }, completion: { _ in
                 if self.longPressRecognizer.state == .possible {
@@ -466,19 +496,19 @@ extension AppGridManager: FolderViewControllerDelegate {
             info.cell.badgeLabel?.superview?.alpha = 1
         }
         
-        guard let folderIndex = self.items[self.currentPage].index(where: { $0 === info.folder }) else { return }
+        guard let folderIndex = self.items.index(where: { $0 === info.folder }) else { return }
         if info.shouldCancelCreation {
-            let cell = self.currentPageCell.collectionView.cellForItem(at: IndexPath(item: folderIndex, section: 0)) as! FolderCell
+            let cell = collectionView.cellForItem(at: IndexPath(item: folderIndex, section: 0)) as! FolderCell
             cell.animateToFolderCreationCancelState {
-                self.items[self.currentPage][folderIndex] = info.folder.pages[0][0]
-                self.currentPageCell.items = self.items[self.currentPage]
-                self.currentPageCell.collectionView.performBatchUpdates({
-                    self.currentPageCell.collectionView.reloadItems(at: [IndexPath(item: folderIndex, section: 0)])
+                self.items[folderIndex] = info.folder.pages[0][0]
+//                self.items = self.items[self.currentPage]
+                self.collectionView.performBatchUpdates({
+                    self.collectionView.reloadItems(at: [IndexPath(item: folderIndex, section: 0)])
                 }, completion: nil)
             }
         } else if info.folder.pages.reduce(0, { $0 + $1.count }) == 0 {
-            self.items[self.currentPage].remove(at: folderIndex)
-            self.currentPageCell.delete(item: info.folder)
+            self.items.remove(at: folderIndex)
+            self.delete(item: info.folder)
         }
     }
 }

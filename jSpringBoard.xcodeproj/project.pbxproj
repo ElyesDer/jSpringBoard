@@ -820,11 +820,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 6D995M6B5M;
+				DEVELOPMENT_TEAM = 75K654T5D3;
 				INFOPLIST_FILE = "$(SRCROOT)/jSpringBoard/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jota.jSpringBoard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wcc.springBoard2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "jSpringBoard/Supporting Files/jSpringBoard-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -839,11 +839,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 6D995M6B5M;
+				DEVELOPMENT_TEAM = 75K654T5D3;
 				INFOPLIST_FILE = "$(SRCROOT)/jSpringBoard/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jota.jSpringBoard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wcc.springBoard2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "jSpringBoard/Supporting Files/jSpringBoard-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;

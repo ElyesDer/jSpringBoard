@@ -14,7 +14,7 @@ enum AppType: Int {
 }
 
 class App: HomeItem, Mappable {
-    
+    var _id: UUID = .init()
     var name: String
     var bundleID: String
     var type: AppType

@@ -98,6 +98,9 @@ class HomeItemCell: UICollectionViewCell {
         self.iconContainerView.applyIconMask()
         self.iconImageView?.isUserInteractionEnabled = true
         self.deleteButtonContainer?.transform = CGAffineTransform.identity.scaledBy(x: 0.0001, y: 0.0001)
+        
+        iconContainerView.debugView()
+        debugView()
     }
     
     func createOverlayView() {

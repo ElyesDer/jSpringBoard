@@ -14,6 +14,7 @@ enum HomeItemType: Int {
 }
 
 protocol HomeItem: class {
+    var _id : UUID { get }
     var name: String { get set }
     var badge: Int? { get }
     var isShareable: Bool { get }

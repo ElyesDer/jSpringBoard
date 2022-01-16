@@ -9,7 +9,7 @@
 import Foundation
 
 class Folder: HomeItem, Mappable {
-    
+    var _id: UUID = .init()
     var name: String
     var pages: [[App]]
     var badge: Int? {
