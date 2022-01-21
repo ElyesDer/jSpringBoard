@@ -11,9 +11,9 @@ import Foundation
 class Folder: HomeItem, Mappable {
     var _id: UUID = .init()
     var name: String
-    var pages: [[App]]
+    var items: [App]
     var badge: Int? {
-        let totalBadge = self.pages.flatMap({ $0 }).reduce(0, { $0 + ($1.badge ?? 0) })
+        let totalBadge = self.items.compactMap({ $0 }).reduce(0, { $0 + ($1.badge ?? 0) })
         if totalBadge == 0 {
             return nil
         } else {
@@ -28,21 +28,21 @@ class Folder: HomeItem, Mappable {
         self.name = mapper.keyPath("name")
         
         let pages: [JSONArray] = mapper.keyPath("apps")
-        self.pages = pages.map { page in
+        self.items = pages.flatMap { page in
             return page.map { App(dictionary: $0) }
         }
     }
     
-    init(name: String, pages: [[App]]) {
+    init(name: String, items: [App]) {
         self.name = name
-        self.pages = pages
+        self.items = items
     }
     
     func dictionaryRepresentation() -> [String : Any] {
-        let apps = self.pages.map { page -> [[String : Any]] in
-            return page.map { $0.dictionaryRepresentation() }
-        }
-        return ["type": HomeItemType.folder.rawValue, "name": self.name, "apps": apps]
+//        let apps = self.items.map { page -> [[String : Any]] in
+//            return page.map { $0.dictionaryRepresentation() }
+//        }
+        return ["type": HomeItemType.folder.rawValue, "name": self.name, "apps": ["apps"]]
     }
 }
 

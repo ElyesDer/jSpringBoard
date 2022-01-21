@@ -73,9 +73,9 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
                 cell.highlightOverlayView?.isHidden = true
                 cell.badgeHighlightOverlayView?.isHidden = true
                 
-                if let cell = cell as? FolderCell {
-                    cell.blurView.isHidden = true
-                }
+//                if let cell = cell as? FolderCell {
+//                    cell.blurView.isHidden = true
+//                }
             }
             self.threeDTouchRecognizer.addTarget(viewController, action: #selector(handle3DTouchGesture(_:)))
             self.viewController.present(viewController, animated: false, completion: nil)
@@ -94,9 +94,9 @@ extension AppGridManager: HomeItemActionsViewControllerDelegate {
             operation.cell.badgeLabel?.superview?.isHidden = false
             operation.cell.badgeLabel?.superview?.alpha = 1
         }
-        if let cell = operation.cell as? FolderCell {
-            cell.blurView.isHidden = false
-        }
+//        if let cell = operation.cell as? FolderCell {
+//            cell.blurView.isHidden = false
+//        }
         
         operation.viewController.dismiss(animated: false, completion: nil)
         

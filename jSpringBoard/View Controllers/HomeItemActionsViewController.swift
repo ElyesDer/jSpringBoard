@@ -102,12 +102,13 @@ class HomeItemActionsViewController: UIViewController {
             let shareItem = HomeItemAction(icon: #imageLiteral(resourceName: "SBSApplicationShortcutSystemIcon_Share"), title: NSLocalizedString("Share \(app.name)", comment: ""), badge: nil)
             self.items = [shareItem, shareItem, shareItem, shareItem, shareItem]
         } else if let folder = self.item as? Folder {
-            for app in folder.pages.flatMap({ $0 }) {
-                if app.badge != nil {
-                    let item = AppAction(app: app)
-                    self.items.append(item)
-                }
-            }
+            
+//            for app in folder.pages.flatMap({ $0 }) {
+//                if app.badge != nil {
+//                    let item = AppAction(app: app)
+//                    self.items.append(item)
+//                }
+//            }
             
             let renameItem = HomeItemAction(icon: #imageLiteral(resourceName: "SBSApplicationShortcutSystemIcon_ComposeNew"), title: NSLocalizedString("Rename", comment: ""), badge: nil)
             self.items.append(renameItem)

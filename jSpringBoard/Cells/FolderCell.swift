@@ -11,19 +11,29 @@ import UIKit
 class FolderCell: HomeItemCell {
     
     @IBOutlet var collectionView: UICollectionView!
-    @IBOutlet var blurView: UIVisualEffectView!
+//    @IBOutlet var blurView: UIVisualEffectView!
     
 //    var currentPage: Int {
 //        return Int(self.collectionView.contentOffset.x) / Int(self.collectionView.frame.size.width)
 //    }
     
-    private var items: [[App]] = [] {
+    private var items: [App] = [] {
         didSet {
             self.collectionView.reloadData()
         }
     }
     
+    public var isEditing : Bool = false
+    var draggedItem: HomeItem?
+    
     private var placeholderView: UIView?
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        self.collectionView.dataSource = self
+        self.collectionView.delegate = self
+    }
     
     override func updateUI() {
         super.updateUI()
@@ -34,28 +44,28 @@ class FolderCell: HomeItemCell {
         // work and to prevent weird glithces in the animation
         // (check large comment on the bottom of PageCell for more)
         // (and yes this is a GOTO COMMENT pardon me)
-        if folder.isNewFolder && self.blurView.mask == nil {
-            if #available(iOS 11, *) {
-                self.blurView.applyIconMask()
-            } else {
-                self.blurView.applyIconMaskView()
-            }
-        }
+//        if folder.isNewFolder && self.blurView.mask == nil {
+//            if #available(iOS 11, *) {
+//                self.blurView.applyIconMask()
+//            } else {
+//                self.blurView.applyIconMaskView()
+//            }
+//        }
         
         // cleaning up possible mess from animateToFolderCreationCancelState
         self.placeholderView?.removeFromSuperview()
         self.containerView.transform = .identity
         
-        self.items = folder.pages
+        self.items = folder.items
         self.collectionView.reloadData()
     }
     
     override func leaveEditingMode() {
         super.leaveEditingMode()
         
-        if let folder = self.item as? Folder, self.items[self.items.count - 1].count == 0 {
+        if let folder = self.item as? Folder, self.items.count == 0 {
             self.items.removeLast()
-            folder.pages = self.items
+            folder.items = self.items
             self.collectionView.reloadData()
         }
     }
@@ -70,9 +80,9 @@ class FolderCell: HomeItemCell {
         // by grabbing the part of the wallpaper right behind it, creating another
         // UIVisualEffectView etc.
         
-        self.blurView.isHidden = true
+//        self.blurView.isHidden = true
         let snapshotView = super.snapshotView()
-        self.blurView.isHidden = false
+//        self.blurView.isHidden = false
         
         let convertedIconFrame = self.convert(self.containerView.frame, to: self.superview!)
         let wallpaperSnapshot = Settings.shared.snapshotOfWallpaper(at: convertedIconFrame)!
@@ -105,21 +115,22 @@ class FolderCell: HomeItemCell {
     
     func moveToFirstAvailablePage(animated: Bool = true) {
         
-        if let folder = self.item as? Folder, self.items[self.items.count - 1].count > 0 {
-            folder.pages.append([])
-            self.items.append([])
+        if let folder = self.item as? Folder, self.items.count > 0 {
+            
+//            folder.items.append([])
+//            self.items.append([])
         }
         
         let appsPerPage = Settings.shared.appsPerPageOnFolder
         for (index, page) in self.items.enumerated() {
-            if page.count < appsPerPage {
-//                fatalError("MEH ?")
-                if index != 0 {
-                    self.moveTo(page: 0, animated: animated)
-                }
-                
-                break
-            }
+//            if page.count < appsPerPage {
+////                fatalError("MEH ?")
+//                if index != 0 {
+//                    self.moveTo(page: 0, animated: animated)
+//                }
+//
+//                break
+//            }
         }
     }
     
@@ -131,9 +142,13 @@ class FolderCell: HomeItemCell {
     }
     
     func move(view: UIView, toCellPositionAtIndex index: Int, completion: (() -> Void)? = nil) {
-        guard let currentPageCell = self.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? PageCell,
-            let flowLayout = currentPageCell.collectionView.collectionViewLayout as? UICollectionViewFlowLayout,
-            let layoutAttributes = flowLayout.layoutAttributesForItem(at: IndexPath(item: index, section: 0)) else { return }
+        guard
+            let currentItemCell = self.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? HomeItemCell,
+              let flowLayout = self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout,
+            let layoutAttributes = flowLayout.layoutAttributesForItem(at: IndexPath(item: index, section: 0)) else {
+                return
+                
+            }
         
         // when we're at a blank page that's ≠ 0, layoutAttributesForItem.frame will return
         // x = 0 for the first item. Why? Who the fuck knows, but let's adjust it.
@@ -141,7 +156,7 @@ class FolderCell: HomeItemCell {
             layoutAttributes.frame.origin.x = flowLayout.sectionInset.left
         }
         
-        let convertedRect1 = self.convert(layoutAttributes.frame, from: currentPageCell)
+        let convertedRect1 = self.convert(layoutAttributes.frame, from: currentItemCell)
         let convertedRect2 = self.convert(convertedRect1, to: view.superview!)
         
         UIView.animate(withDuration: 0.35, animations: {
@@ -177,6 +192,12 @@ class FolderCell: HomeItemCell {
     }
 }
 
+extension FolderCell: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return .init(width: self.collectionView.frame.width - 50, height: 80)
+    }
+}
+
 extension FolderCell: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -189,11 +210,85 @@ extension FolderCell: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PageCell", for: indexPath) as! PageCell
-        cell.draggedItem = nil
-        cell.items = self.items[indexPath.row]
-        cell.collectionView.reloadData()
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AppCell", for: indexPath) as! HomeItemCell
+        let app = self.items[indexPath.row]
+        if self.isEditing {
+            cell.animate()
+            cell.enterEditingMode()
+        } else {
+            cell.stopAnimation()
+            cell.leaveEditingMode()
+        }
+        
+        if let draggedItem = self.draggedItem, draggedItem === app {
+            cell.contentView.isHidden = true
+        } else {
+            cell.contentView.isHidden = false
+        }
+        
+        cell.item = app
+//        cell.delegate = self
+        
         return cell
     }
+    
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        self.delegate?.didSelect(cell: collectionView.cellForItem(at: indexPath) as! HomeItemCell, on: self)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+//        if let cell = cell as? FolderCell, cell.blurView.mask == nil {
+//            // This most definitely will go wrong sometime (likely in older devices),
+//            // or even cause visible glitches on modern devices when showing a folder
+//            // cell because apparently blur is fucking hard.
+//            // Problem: a FolderCell's background is blurred, but it needs to be
+//            // masked with the default icon mask. You can't mask the layer of a
+//            // UIVisualEffectView, it'll just break (just like when you mess with
+//            // its alpha). You have to set the maskView for it to work. So far ok,
+//            // but the problem is now a different one: when to set that mask?
+//            // If you set it on awakeFromNib it will just make the effect disappear
+//            // completely. Not even broken, just invisible. Apparently I have to wait
+//            // until the cell is at least a little bit on screen for that to work.
+//            // I tried putting it in didMoveToWindow, didMoveToSuperview etc, nothing.
+//            // So I just use my default hack: wait.
+//            // It might have something to do with this offscreen pass stuff mentioned here:
+//            // https://forums.developer.apple.com/thread/50854#159049
+//            // It must be fun making UIVisualEffectView
+//            // (note: on iOS 11 settings UIView's mask just doesn't work anymore on the visual
+//            // effect view, but masking the layer does! Go figure)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+//                if #available(iOS 11, *) {
+//                    cell.blurView.applyIconMask()
+//                } else {
+//                    cell.blurView.applyIconMaskView()
+//                }
+//            })
+//        }
+    }
 }
+
+// this is AppCell delegates
+//extension FolderCell: UICollectionViewDataSource, UICollectionViewDelegate {
+//
+//    func numberOfSections(in collectionView: UICollectionView) -> Int {
+//        return 1
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return self.items.count
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PageCell", for: indexPath) as! PageCell
+//        cell.draggedItem = nil
+//        cell.items = self.items[indexPath.row]
+//        cell.collectionView.reloadData()
+//        return cell
+//    }
+//}
 

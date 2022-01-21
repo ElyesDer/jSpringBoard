@@ -136,7 +136,7 @@ extension HomeItemsManager {
         
         let appResults = self.search(query, in: apps).map { SearchResult(app: $0, folder: nil) }
         let folderResults = folders.flatMap { item -> [SearchResult] in
-            let apps = item.pages.flatMap({ $0 })
+            let apps = item.items.flatMap({ $0 })
             return self.search(query, in: apps).map { SearchResult(app: $0, folder: item) }
         }
         
@@ -171,34 +171,34 @@ extension HomeItemsManager {
     }
     
     func add(app: App, to folder: Folder) {
-        
-        for (index, page) in folder.pages.enumerated() {
-            if page.count < Settings.shared.appsPerPageOnFolder {
-                folder.pages[index].append(app)
-                return
-            }
-        }
-        
-        folder.pages.append([app])
+        fatalError("Not meant")
+//        for (index, page) in folder.items.enumerated() {
+//            if page.count < Settings.shared.appsPerPageOnFolder {
+//                folder.pages[index].append(app)
+//                return
+//            }
+//        }
+//
+//        folder.pages.append([app])
     }
     
     func remove(app: App, from folder: Folder) {
-        
-        for (index, page) in folder.pages.enumerated() {
-            guard let appIndex = page.index(where: { $0 === app }) else { continue }
-            folder.pages[index].remove(at: appIndex)
-            if folder.pages[index].count == 0 {
-                folder.pages.remove(at: index)
-            }
-            break
-        }
-        
-        guard folder.pages.count == 0 else { return }
-        for (index, page) in self.pages.enumerated() {
-            if let folderIndex = page.index(where: { $0 === folder }) {
-                self.pages[index].remove(at: folderIndex)
-            }
-        }
+        fatalError("Not meant")
+//        for (index, page) in folder.pages.enumerated() {
+//            guard let appIndex = page.index(where: { $0 === app }) else { continue }
+//            folder.pages[index].remove(at: appIndex)
+//            if folder.pages[index].count == 0 {
+//                folder.pages.remove(at: index)
+//            }
+//            break
+//        }
+//
+//        guard folder.pages.count == 0 else { return }
+//        for (index, page) in self.pages.enumerated() {
+//            if let folderIndex = page.index(where: { $0 === folder }) {
+//                self.pages[index].remove(at: folderIndex)
+//            }
+//        }
     }
 }
 

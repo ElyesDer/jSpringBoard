@@ -364,7 +364,7 @@ extension AppGridManager: UIScrollViewDelegate {
 extension AppGridManager : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if let folder = self.items[indexPath.row] as? Folder {
-            return .init(width: 300, height: 89 * ( folder.pages.first?.count ?? 1 ) )
+            return .init(width: 300, height: 89 * ( folder.items.count ) )
         } else if let _ = self.items[indexPath.row] as? App {
             return .init(width: 300, height: 89)
         }
@@ -444,33 +444,33 @@ extension AppGridManager: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        if let cell = cell as? FolderCell, cell.blurView.mask == nil {
-            // This most definitely will go wrong sometime (likely in older devices),
-            // or even cause visible glitches on modern devices when showing a folder
-            // cell because apparently blur is fucking hard.
-            // Problem: a FolderCell's background is blurred, but it needs to be
-            // masked with the default icon mask. You can't mask the layer of a
-            // UIVisualEffectView, it'll just break (just like when you mess with
-            // its alpha). You have to set the maskView for it to work. So far ok,
-            // but the problem is now a different one: when to set that mask?
-            // If you set it on awakeFromNib it will just make the effect disappear
-            // completely. Not even broken, just invisible. Apparently I have to wait
-            // until the cell is at least a little bit on screen for that to work.
-            // I tried putting it in didMoveToWindow, didMoveToSuperview etc, nothing.
-            // So I just use my default hack: wait.
-            // It might have something to do with this offscreen pass stuff mentioned here:
-            // https://forums.developer.apple.com/thread/50854#159049
-            // It must be fun making UIVisualEffectView
-            // (note: on iOS 11 settings UIView's mask just doesn't work anymore on the visual
-            // effect view, but masking the layer does! Go figure)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
-                if #available(iOS 11, *) {
-                    cell.blurView.applyIconMask()
-                } else {
-                    cell.blurView.applyIconMaskView()
-                }
-            })
-        }
+//        if let cell = cell as? FolderCell, cell.blurView.mask == nil {
+//            // This most definitely will go wrong sometime (likely in older devices),
+//            // or even cause visible glitches on modern devices when showing a folder
+//            // cell because apparently blur is fucking hard.
+//            // Problem: a FolderCell's background is blurred, but it needs to be
+//            // masked with the default icon mask. You can't mask the layer of a
+//            // UIVisualEffectView, it'll just break (just like when you mess with
+//            // its alpha). You have to set the maskView for it to work. So far ok,
+//            // but the problem is now a different one: when to set that mask?
+//            // If you set it on awakeFromNib it will just make the effect disappear
+//            // completely. Not even broken, just invisible. Apparently I have to wait
+//            // until the cell is at least a little bit on screen for that to work.
+//            // I tried putting it in didMoveToWindow, didMoveToSuperview etc, nothing.
+//            // So I just use my default hack: wait.
+//            // It might have something to do with this offscreen pass stuff mentioned here:
+//            // https://forums.developer.apple.com/thread/50854#159049
+//            // It must be fun making UIVisualEffectView
+//            // (note: on iOS 11 settings UIView's mask just doesn't work anymore on the visual
+//            // effect view, but masking the layer does! Go figure)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+//                if #available(iOS 11, *) {
+//                    cell.blurView.applyIconMask()
+//                } else {
+//                    cell.blurView.applyIconMaskView()
+//                }
+//            })
+//        }
     }
     
     

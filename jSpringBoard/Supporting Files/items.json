@@ -5,11 +5,6 @@
  "bundleID": "com.apple.MobileSMS",
  "badge": 3
   },
-  {
-  "type": 0,
-  "name": "Calendar",
- "bundleID": "com.apple.mobilecal"
-  },
  {
   "type": 0,
   "name": "Photos",
@@ -21,12 +16,8 @@
   "name": "Camera",
   "icon": "camera.png",
  "bundleID": "com.apple.camera"
-  }, {
-  "type": 0,
-  "name": "Clock",
- "icon": "clock.png",
- "bundleID": "com.apple.mobiletimer"
-  }, {
+  },
+  {
   "type": 0,
   "name": "Calculator",
   "icon": "calculator.jpg",

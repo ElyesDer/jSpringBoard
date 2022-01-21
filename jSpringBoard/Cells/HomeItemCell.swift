@@ -11,7 +11,7 @@ import UIKit
 class HomeItemCellSnapshotView: UIView {
     
     var deleteButtonContainer: UIView?
-    var badgeContainer: UIView
+//    var badgeContainer: UIView
     var iconView: UIView
 //    var nameLabel: UIView
     var overlayView: UIView
@@ -21,11 +21,13 @@ class HomeItemCellSnapshotView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(frame: CGRect, badgeContainer: UIView, iconView: UIView,
+    required init(frame: CGRect,
+//                  badgeContainer: UIView,
+                  iconView: UIView,
 //                  nameLabel: UIView,
                   overlayView: UIView, badgeOverlayView: UIView?) {
         
-        self.badgeContainer = badgeContainer
+//        self.badgeContainer = badgeContainer
         self.iconView = iconView
 //        self.nameLabel = nameLabel
         self.overlayView = overlayView
@@ -35,7 +37,7 @@ class HomeItemCellSnapshotView: UIView {
         self.addSubview(iconView)
         self.addSubview(overlayView)
 //        self.addSubview(nameLabel)
-        self.addSubview(badgeContainer)
+//        self.addSubview(badgeContainer)
         
         if let badgeOverlayView = badgeOverlayView {
             self.addSubview(badgeOverlayView)
@@ -101,7 +103,7 @@ class HomeItemCell: UICollectionViewCell {
         self.containerView?.isUserInteractionEnabled = true
         self.deleteButtonContainer?.transform = CGAffineTransform.identity.scaledBy(x: 0.0001, y: 0.0001)
         
-        containerView.debugView()
+//        containerView.debugView()
         debugView()
     }
     
@@ -285,8 +287,8 @@ class HomeItemCell: UICollectionViewCell {
         let iconContainerSnapshot = self.containerView.snapshotView(afterScreenUpdates: true)!
         iconContainerSnapshot.frame = self.containerView.frame
         
-        let badgeContainerSnapshot = self.badgeLabel!.superview!.snapshotView(afterScreenUpdates: true)!
-        badgeContainerSnapshot.frame = self.badgeLabel!.superview!.frame
+//        let badgeContainerSnapshot = self.badgeLabel!.superview!.snapshotView(afterScreenUpdates: true)!
+//        badgeContainerSnapshot.frame = self.badgeLabel!.superview!.frame
         
 //        let nameLabelSnapshot = self.nameLabel!.snapshotView(afterScreenUpdates: true)!
 //        nameLabelSnapshot.frame = self.nameLabel!.frame
@@ -300,7 +302,9 @@ class HomeItemCell: UICollectionViewCell {
             badgeOverlaySnapshot?.frame = badgeOverlayView.frame
         }
         
-        let snapshotView = HomeItemCellSnapshotView(frame: self.bounds, badgeContainer: badgeContainerSnapshot, iconView: iconContainerSnapshot,
+        let snapshotView = HomeItemCellSnapshotView(frame: self.bounds,
+//                                                    badgeContainer: badgeContainerSnapshot,
+                                                    iconView: iconContainerSnapshot,
 //                                                    nameLabel: nameLabelSnapshot,
                                                     overlayView: overlaySnapshot, badgeOverlayView: badgeOverlaySnapshot)
         

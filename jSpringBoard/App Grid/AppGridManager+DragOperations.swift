@@ -116,12 +116,18 @@ extension AppGridManager {
             guard let itemCell = collectionView.cellForItem(at: indexPath) as? HomeItemCell else { return }
 
             let iconCenter = itemCell.containerView.center
-            let offset = 5 as CGFloat
-            let targetRect = CGRect(x: iconCenter.x - offset, y: iconCenter.y - offset, width: offset * 4, height: offset * 4)
+            let offset = 30 as CGFloat
+            let targetRect = CGRect(x: iconCenter.x - offset, y: iconCenter.y - offset, width: offset * 4, height: offset * 2)
 
             let convertedPoint = itemCell.convert(touchPoint, from: collectionView)
 //            print(event: 022, message: #function + "targetRect.contains(convertedPoint) = \(targetRect.contains(convertedPoint) )")
 //            print(event: 022, message: #function + "IndexPath == current Index Path = \(indexPath.row == currentOperation.currentIndexPath.row )")
+            
+            
+            // DEBUG
+            let debugV : UIView = .init(frame: targetRect)
+            debugV.debugView()
+            itemCell.addSubview(debugV)
             
             if targetRect.contains(convertedPoint) && indexPath.row != currentOperation.currentIndexPath.row
 //                && collectionView == self.collectionView

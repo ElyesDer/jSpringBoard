@@ -14,7 +14,7 @@ protocol FolderViewControllerDelegate: class {
     func didSelect(app: App, on viewController: FolderViewController)
     func didEnterEditingMode(on viewController: FolderViewController)
     func didBeginFolderDragOut(withTransfer transfer: AppDragOperationTransfer, on viewController: FolderViewController)
-    func dismissAnimationWillStart(currentPage: Int, updatedPages: [[App]], on viewController: FolderViewController)
+    func dismissAnimationWillStart(currentPage: Int, updatedPages: [App], on viewController: FolderViewController)
     func dismissAnimationDidFinish(on viewController: FolderViewController)
 }
 
@@ -77,7 +77,7 @@ class FolderViewController: UIViewController {
         
         self.gridManager = AppGridManager(viewController: self,
                                           mainCollectionView: self.collectionView,
-                                          items: self.folder.pages.first ?? [])
+                                          items: self.folder.items ?? [] )
         self.gridManager.delegate = self
         
         if self.gridManager.items.count == 1 {
@@ -324,7 +324,7 @@ class FolderViewController: UIViewController {
         self.setupPlaceholder(forPage: self.pageControl.currentPage)
         self.gridManager.leaveEditingMode(suppressHaptic: false)
         
-        self.delegate?.dismissAnimationWillStart(currentPage: self.pageControl.currentPage, updatedPages: self.gridManager.items as! [[App]], on: self)
+        self.delegate?.dismissAnimationWillStart(currentPage: self.pageControl.currentPage, updatedPages: self.gridManager.items as! [App], on: self)
         let animation = UIViewPropertyAnimator(duration: 0.35, controlPoint1: CGPoint(x: 0.37, y: 0.13), controlPoint2: CGPoint(x: 0, y: 1)) {
             self.view.layoutIfNeeded()
             

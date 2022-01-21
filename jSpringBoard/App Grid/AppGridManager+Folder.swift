@@ -72,7 +72,7 @@ extension AppGridManager {
         self.cancelFolderOperation()
         if let folder = itemCell.item as? Folder, let folderCell = itemCell as? FolderCell {
             self.currentFolderOperation = FolderDropOperation(dragOperation: dragOperation, folder: folder, placeholderView: folderPlaceholderView)
-            folderCell.blurView.isHidden = true
+//            folderCell.blurView.isHidden = true
         } else if let app = itemCell.item as? App {
             self.currentFolderOperation = FolderCreationOperation(dragOperation: dragOperation, destinationApp: app, placeholderView: folderPlaceholderView)
         }
@@ -160,9 +160,12 @@ extension AppGridManager {
 //            let page = self.items.index(where: { $0.contains { $0 === operation.destinationApp } }),
             let sourceIndex = self.items.index(where: { $0 === operation.dragOperation.item }),
             let destinationIndex = self.items.index(where: { $0 === operation.destinationApp }),
-            let sourceApp = operation.dragOperation.item as? App else { return }
+            let sourceApp = operation.dragOperation.item as? App else {
+                return
+                
+            }
         
-        let newFolder = Folder(name: NSLocalizedString("New Folder", comment: ""), pages: [[operation.destinationApp, sourceApp]])
+        let newFolder = Folder(name: NSLocalizedString("New Folder", comment: ""), items: [operation.destinationApp, sourceApp])
         newFolder.isNewFolder = true
         self.items[destinationIndex] = newFolder
         
@@ -228,7 +231,7 @@ extension AppGridManager {
         let folderIndexPath = IndexPath(item: destinationIndex, section: 0)
         let folderCell = collectionView.cellForItem(at: folderIndexPath) as! FolderCell
         let item = folderCell.item as! Folder
-        item.pages[0].append(sourceApp)
+        item.items.append(sourceApp)
         
         if !didDrop {
             self.showFolderPostOperation(operation,
@@ -248,7 +251,7 @@ extension AppGridManager {
             operation.dragOperation.placeholderView.removeFromSuperview()
             
             let folderCell = collectionView.cellForItem(at: folderIndexPath) as! FolderCell
-            folderCell.move(view: operation.dragOperation.placeholderView.iconView, toCellPositionAtIndex: item.pages[0].count - 1) {
+            folderCell.move(view: operation.dragOperation.placeholderView.iconView, toCellPositionAtIndex: item.items.count - 1) {
                 var didRestoreSavedState = false
                 if let savedState = operation.dragOperation.savedState {
                     fatalError("We saving or something")
@@ -303,7 +306,7 @@ extension AppGridManager {
 //                folderCell.nameLabel?.alpha = 1
             }, completion: { _ in
                 operation.placeholderView.removeFromSuperview()
-                folderCell.blurView.isHidden = false
+//                folderCell.blurView.isHidden = false
                 folderCell.animate()
             })
         }
@@ -332,9 +335,9 @@ extension AppGridManager {
             self.currentDragOperation?.placeholderView.transform = CGAffineTransform.identity.scaledBy(x: 1.3, y: 1.3)
 //            cell.nameLabel?.alpha = 1
         }, completion: { _ in
-            if let folderCell = cell as? FolderCell {
-                folderCell.blurView.isHidden = false
-            }
+//            if let folderCell = cell as? FolderCell {
+//                folderCell.blurView.isHidden = false
+//            }
             
             folderOperation.placeholderView.removeFromSuperview()
             cell.animate(force: true)
@@ -372,7 +375,7 @@ extension AppGridManager: FolderViewControllerDelegate {
         guard let info = self.openFolderInfo else { return }
         
         info.cell.containerView?.isHidden = true
-        info.cell.blurView.isHidden = true
+//        info.cell.blurView.isHidden = true
     }
     
     func didChange(name: String, on viewController: FolderViewController) {
@@ -394,7 +397,7 @@ extension AppGridManager: FolderViewControllerDelegate {
         let folderIndex = self.items.index(where: { $0 === info.folder })!
 //        let pageCell = self.currentPageCell
         
-        if info.folder.pages.flatMap({ $0 }).count == 0 {
+        if info.folder.items.flatMap({ $0 }).count == 0 {
             self.items.append(transfer.operation.item)
             self.items.remove(at: folderIndex)
             
@@ -462,10 +465,10 @@ extension AppGridManager: FolderViewControllerDelegate {
         }
     }
     
-    func dismissAnimationWillStart(currentPage: Int, updatedPages: [[App]], on viewController: FolderViewController) {
+    func dismissAnimationWillStart(currentPage: Int, updatedPages: [App], on viewController: FolderViewController) {
         guard let info = self.openFolderInfo else { return }
         
-        info.folder.pages = updatedPages
+        info.folder.items = updatedPages
         info.cell.item = info.folder
         info.cell.moveTo(page: currentPage, animated: false)
         self.delegate?.didUpdateItems(on: self)
@@ -477,7 +480,7 @@ extension AppGridManager: FolderViewControllerDelegate {
         viewController.dismiss(animated: false, completion: {
             self.openFolderInfo = nil
             info.cell.containerView?.isHidden = false
-            info.cell.blurView.isHidden = false
+//            info.cell.blurView.isHidden = false
             
             if self.isEditing {
                 info.cell.animate()
@@ -500,13 +503,13 @@ extension AppGridManager: FolderViewControllerDelegate {
         if info.shouldCancelCreation {
             let cell = collectionView.cellForItem(at: IndexPath(item: folderIndex, section: 0)) as! FolderCell
             cell.animateToFolderCreationCancelState {
-                self.items[folderIndex] = info.folder.pages[0][0]
+                self.items[folderIndex] = info.folder.items[0]
 //                self.items = self.items[self.currentPage]
                 self.collectionView.performBatchUpdates({
                     self.collectionView.reloadItems(at: [IndexPath(item: folderIndex, section: 0)])
                 }, completion: nil)
             }
-        } else if info.folder.pages.reduce(0, { $0 + $1.count }) == 0 {
+        } else if info.folder.items.count == 0 { // info.folder.pages.reduce(0, { $0 + $1.count }) == 0
             self.items.remove(at: folderIndex)
             self.delete(item: info.folder)
         }
